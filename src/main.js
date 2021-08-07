@@ -2,6 +2,7 @@ import { render } from './utils/render.js';
 import { createAppFiltersTemplate } from './view/app-filters.js';
 import { createAppMenuTemplate } from './view/app-menu.js';
 import { createAppSortTemplate } from './view/app-sort.js';
+import { createTripEventsTemplate } from './view/trip-events.js';
 import { createTripInfoTemplate } from './view/trip-info.js';
 
 const appMainElement = document.querySelector('.page-body');
@@ -14,3 +15,4 @@ render(appHeaderElement, createTripInfoTemplate(), 'afterbegin');
 render(appNavigationElement, createAppMenuTemplate(), 'beforeend');
 render(appFiltersElement, createAppFiltersTemplate(), 'beforeend');
 render(appEventsElement, createAppSortTemplate(), 'beforeend');
+render(appEventsElement, createTripEventsTemplate(), 'beforeend');
