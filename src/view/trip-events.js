@@ -1,4 +1,5 @@
 import { createEditRoutePointTemplate } from './edit-route-point.js';
+import { createNewPoint } from './new-point-form.js';
 import { createRoutePointTemplate } from './route-point.js';
 
 export const createTripEventsTemplate = () => (
@@ -7,5 +8,6 @@ export const createTripEventsTemplate = () => (
     ${createRoutePointTemplate()}
     ${createRoutePointTemplate()}
     ${createRoutePointTemplate()}
+    ${createNewPoint()}
   </ul>`
 );
