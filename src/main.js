@@ -4,6 +4,7 @@ import { createAppMenuTemplate } from './view/app-menu.js';
 import { createAppSortTemplate } from './view/app-sort.js';
 import { createTripEventsTemplate } from './view/trip-events.js';
 import { createTripInfoTemplate } from './view/trip-info.js';
+import './mock/trips.js';
 
 const appMainElement = document.querySelector('.page-body');
 const appHeaderElement = appMainElement.querySelector('.trip-main');
