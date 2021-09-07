@@ -16,16 +16,16 @@ const appEventsElement = appMainElement.querySelector('.trip-events');
 const data = getPoints(15);
 const points = data.map((element) => (
   {
-    price: element.base_price,
-    dispatchDate: dayjs(element.date_from).format('DD/MM/YY'),
-    dispatchTime: dayjs(element.date_from).format('HH:mm'),
-    arrivalDate: dayjs(element.date_to).format('DD/MM/YY'),
-    arrivalTime: dayjs(element.date_to).format('HH:mm'),
-    eventDay: dayjs(element.date_to).format('MMM DD'),
-    dateClass: dayjs(element.date_from).format('YYYY-MM-DD'),
-    dispatchTimeClass: dayjs(element.date_from).format('YYYY-MM-DDTHH:mm'),
-    arrivalTimeClass: dayjs(element.date_to).format('YYYY-MM-DDTHH:mm'),
-    duration: calculateDuration(element.date_from, element.date_to),
+    price: element.basePrice,
+    dispatchDate: dayjs(element.dateFrom).format('DD/MM/YY'),
+    dispatchTime: dayjs(element.dateFrom).format('HH:mm'),
+    arrivalDate: dayjs(element.dateTo).format('DD/MM/YY'),
+    arrivalTime: dayjs(element.dateTo).format('HH:mm'),
+    eventDay: dayjs(element.dateTo).format('MMM DD'),
+    dateClass: dayjs(element.dateFrom).format('YYYY-MM-DD'),
+    dispatchTimeClass: dayjs(element.dateFrom).format('YYYY-MM-DDTHH:mm'),
+    arrivalTimeClass: dayjs(element.dateTo).format('YYYY-MM-DDTHH:mm'),
+    duration: calculateDuration(element.dateFrom, element.dateTo),
     type: element.type,
     offers: element.offers,
     destination: element.destination,
@@ -40,4 +40,3 @@ render(appNavigationElement, createAppMenuTemplate(), 'beforeend');
 render(appFiltersElement, createAppFiltersTemplate(), 'beforeend');
 render(appEventsElement, createAppSortTemplate(), 'beforeend');
 render(appEventsElement, createTripEventsTemplate(points), 'beforeend');
-

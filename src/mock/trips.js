@@ -282,12 +282,12 @@ const generateMock = () => {
   const time = generateTime();
   const destination = generateDestination();
   return {
-    base_price: event.price,
-    date_from: time.dispatch,
-    date_to: time.arrival,
+    basePrice: event.price,
+    dateFrom: time.dispatch,
+    dateTo: time.arrival,
     destination: destination,
     id: '0',
-    is_favorite: false,
+    isFavorite: false,
     offers: event.offers,
     type: event.type,
   };
@@ -296,5 +296,5 @@ const generateMock = () => {
 generateMock();
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
-  return mocks.sort((a, b) => a.date_from > b.date_from);
+  return mocks.sort((a, b) => a.dateFrom > b.dateFrom);
 };
