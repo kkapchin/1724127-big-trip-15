@@ -32,12 +32,9 @@ const points = data.map((element) => (
   }
 ));
 
-// eslint-disable-next-line no-console
-console.log(points);
 const [...cities] = new Set(data.map((element) => element.destination.name));
 const route = cities.join(' — ');
 
-//data.options.dispatch.date = 'qq';//data.options.dispatch.format('DD/mm/YY HH:mm');
 render(appHeaderElement, createTripInfoTemplate(route), 'afterbegin');
 render(appNavigationElement, createAppMenuTemplate(), 'beforeend');
 render(appFiltersElement, createAppFiltersTemplate(), 'beforeend');
