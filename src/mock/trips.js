@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
@@ -293,7 +296,6 @@ const generateMock = () => {
   };
 };
 
-generateMock();
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
   return mocks.sort((a, b) => a.dateFrom > b.dateFrom);
