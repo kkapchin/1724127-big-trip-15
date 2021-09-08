@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { calculateDuration } from '../utils/calculate-duration';
 
 dayjs.extend(relativeTime);
 
@@ -298,5 +299,22 @@ const generateMock = () => {
 
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
-  return mocks.sort((a, b) => a.dateFrom > b.dateFrom);
+  mocks.sort((a, b) => a.dateFrom > b.dateFrom);
+  return mocks.map((element) => (
+    {
+      price: element.basePrice,
+      dispatchDate: dayjs(element.dateFrom).format('DD/MM/YY'),
+      dispatchTime: dayjs(element.dateFrom).format('HH:mm'),
+      arrivalDate: dayjs(element.dateTo).format('DD/MM/YY'),
+      arrivalTime: dayjs(element.dateTo).format('HH:mm'),
+      eventDay: dayjs(element.dateTo).format('MMM DD'),
+      dateClass: dayjs(element.dateFrom).format('YYYY-MM-DD'),
+      dispatchTimeClass: dayjs(element.dateFrom).format('YYYY-MM-DDTHH:mm'),
+      arrivalTimeClass: dayjs(element.dateTo).format('YYYY-MM-DDTHH:mm'),
+      duration: calculateDuration(element.dateFrom, element.dateTo),
+      type: element.type,
+      offers: element.offers,
+      destination: element.destination,
+    }
+  ));
 };
