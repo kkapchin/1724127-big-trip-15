@@ -1,17 +1,18 @@
 const renderOffers = (offers) => {
   if(offers) {
-    const offersElements = offers.map((element) =>
-      `<li class="event__offer">
-          <span class="event__offer-title">${element.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${element.price}</span>
-        </li>`);
-
-    return `<ul class="event__selected-offers">
-              ${offersElements.join('')}
-            </ul>`;
+    return '';
   }
-  return '';
+
+  const offersElements = offers.map((element) =>
+    `<li class="event__offer">
+        <span class="event__offer-title">${element.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${element.price}</span>
+      </li>`);
+
+  return `<ul class="event__selected-offers">
+            ${offersElements.join('')}
+          </ul>`;
 };
 
 export const createRoutePointTemplate = (points) => {

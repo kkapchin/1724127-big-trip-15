@@ -1,10 +1,11 @@
 import { getPoints } from './mock/trips.js';
-import { getRouteInfo, renderPosition, renderTemplate } from './utils.js';
+import { getRouteInfo, renderElement, renderPosition, renderTemplate } from './utils.js';
 import AppFiltersView from './view/app-filters.js';
 import AppMenuView from './view/app-menu.js';
 import AppSortView from './view/app-sort.js';
 import { createTripEventsTemplate } from './view/trip-events.js';
-import { createTripInfoTemplate } from './view/trip-info.js';
+import TripInfoView from './view/trip-info.js';
+import RouteInfoView from './view/route-info.js';
 
 const appMainElement = document.querySelector('.page-body');
 const appHeaderElement = appMainElement.querySelector('.trip-main');
@@ -13,9 +14,11 @@ const appFiltersElement = appHeaderElement.querySelector('.trip-controls__filter
 const appEventsElement = appMainElement.querySelector('.trip-events');
 const points = getPoints(15);
 const routeInfo = getRouteInfo(points);
+const tripInfoComponent = new TripInfoView();
 
-renderTemplate(appHeaderElement, createTripInfoTemplate(routeInfo), 'afterbegin');
-renderTemplate(appNavigationElement, new AppMenuView().getElement(), renderPosition.BEFOREEND);
-renderTemplate(appFiltersElement, new AppFiltersView().getElement(), renderPosition.BEFOREEND);
-renderTemplate(appEventsElement, new AppSortView().getElement(), renderPosition.BEFOREEND);
+renderElement(appHeaderElement, tripInfoComponent.getElement(), renderPosition.AFTERBEGIN);
+renderElement(tripInfoComponent.getElement(), new RouteInfoView(routeInfo).getElement(), renderPosition.AFTERBEGIN);
+renderElement(appNavigationElement, new AppMenuView().getElement(), renderPosition.BEFOREEND);
+renderElement(appFiltersElement, new AppFiltersView().getElement(), renderPosition.BEFOREEND);
+renderElement(appEventsElement, new AppSortView().getElement(), renderPosition.BEFOREEND);
 renderTemplate(appEventsElement, createTripEventsTemplate(points), 'beforeend');
