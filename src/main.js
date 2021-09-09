@@ -1,8 +1,8 @@
 import { getPoints } from './mock/trips.js';
-import { getRouteInfo, renderTemplate } from './utils.js';
-import { createAppFiltersTemplate } from './view/app-filters.js';
-import { createAppMenuTemplate } from './view/app-menu.js';
-import { createAppSortTemplate } from './view/app-sort.js';
+import { getRouteInfo, renderPosition, renderTemplate } from './utils.js';
+import AppFiltersView from './view/app-filters.js';
+import AppMenuView from './view/app-menu.js';
+import AppSortView from './view/app-sort.js';
 import { createTripEventsTemplate } from './view/trip-events.js';
 import { createTripInfoTemplate } from './view/trip-info.js';
 
@@ -15,7 +15,7 @@ const points = getPoints(15);
 const routeInfo = getRouteInfo(points);
 
 renderTemplate(appHeaderElement, createTripInfoTemplate(routeInfo), 'afterbegin');
-renderTemplate(appNavigationElement, createAppMenuTemplate(), 'beforeend');
-renderTemplate(appFiltersElement, createAppFiltersTemplate(), 'beforeend');
-renderTemplate(appEventsElement, createAppSortTemplate(), 'beforeend');
+renderTemplate(appNavigationElement, new AppMenuView().getElement(), renderPosition.BEFOREEND);
+renderTemplate(appFiltersElement, new AppFiltersView().getElement(), renderPosition.BEFOREEND);
+renderTemplate(appEventsElement, new AppSortView().getElement(), renderPosition.BEFOREEND);
 renderTemplate(appEventsElement, createTripEventsTemplate(points), 'beforeend');

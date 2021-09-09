@@ -26,8 +26,7 @@ export const renderTemplate = (container, template, position) => {
 export const createElement = (template) => {
   const newElement = document.createElement('div');
   newElement.innerHTML = template;
-
-  return newElement.firstChild;
+  return newElement.firstChild.outerHTML;
 };
 
 export const getRandomInteger = (a, b) => {
