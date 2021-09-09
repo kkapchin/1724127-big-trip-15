@@ -1,10 +1,25 @@
-import { createNewPoint } from './route-point-form.js';
-import { createRoutePointTemplate } from './route-point.js';
+import { createElement } from '../utils.js';
 
-export const createTripEventsTemplate = (points) => {
-  const startPoint = points.shift();
-  return `<ul class="trip-events__list">
-            ${createNewPoint(startPoint)}
-            ${createRoutePointTemplate(points)}
-          </ul>`;
-};
+const createTripEventsTemplate = () => ('<ul class="trip-events__list"></ul>');
+
+export default class TripEvents {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventsTemplate();
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
