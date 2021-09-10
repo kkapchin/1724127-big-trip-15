@@ -1,39 +1,41 @@
-const renderPhotos = (photos) => {
-  if(photos) {
-    const photosElements = photos.map((element) => `<img class="event__photo" src="${element.src}" alt="${element.description}">`);
+import { createElement } from '../utils.js';
 
-    return `<div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${photosElements.join('')}
-              </div>
-            </div>`;
+const renderPhotos = (photos) => {
+  if(!photos) {
+    return '';
   }
-  return '';
+  const photosElements = photos.map((element) => `<img class="event__photo" src="${element.src}" alt="${element.description}">`);
+
+  return `<div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${photosElements.join('')}
+            </div>
+          </div>`;
 };
 
 const renderOffers = (offers) => {
-  if(offers) {
-    const offersElements = offers.map((element) =>
-      `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${element.title}-1" type="checkbox" name="event-offer-${element.title}" checked>
-        <label class="event__offer-label" for="event-offer-${element.title}-1">
-          <span class="event__offer-title">${element.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${element.price}</span>
-        </label>
-      </div>`);
-
-    return `<section class="event__section  event__section--offers">
-              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-              <div class="event__available-offers">
-                ${offersElements.join('')}
-              </div>
-            </section>`;
+  if(!offers) {
+    return '';
   }
-  return '';
+  const offersElements = offers.map((element) =>
+    `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${element.title}-1" type="checkbox" name="event-offer-${element.title}" checked>
+      <label class="event__offer-label" for="event-offer-${element.title}-1">
+        <span class="event__offer-title">${element.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${element.price}</span>
+      </label>
+    </div>`);
+
+  return `<section class="event__section  event__section--offers">
+            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+            <div class="event__available-offers">
+              ${offersElements.join('')}
+            </div>
+          </section>`;
 };
 
-export const createNewPoint = (point) => (
+const createNewPoint = (point) => (
   `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -146,3 +148,26 @@ export const createNewPoint = (point) => (
     </form>
   </li>`
 );
+
+export default class RoutePointForm {
+  constructor(point) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createNewPoint(this._point);
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

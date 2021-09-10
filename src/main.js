@@ -1,42 +1,50 @@
-import dayjs from 'dayjs';
 import { getPoints } from './mock/trips.js';
-import { calculateDuration } from './utils/calculate-duration.js';
-import { render } from './utils/render.js';
-import { createAppFiltersTemplate } from './view/app-filters.js';
-import { createAppMenuTemplate } from './view/app-menu.js';
-import { createAppSortTemplate } from './view/app-sort.js';
-import { createTripEventsTemplate } from './view/trip-events.js';
-import { createTripInfoTemplate } from './view/trip-info.js';
+import { getRouteInfo, render, renderPosition } from './utils.js';
+import AppFiltersView from './view/app-filters.js';
+import AppMenuView from './view/app-menu.js';
+import AppSortView from './view/app-sort.js';
+import TripEventsView from './view/trip-events.js';
+import TripInfoView from './view/trip-info.js';
+import RouteInfoView from './view/route-info.js';
+import RoutePointView from './view/route-point.js';
+import RoutePointFormView from './view/route-point-form.js';
 
 const appMainElement = document.querySelector('.page-body');
 const appHeaderElement = appMainElement.querySelector('.trip-main');
 const appNavigationElement = appHeaderElement.querySelector('.trip-controls__navigation');
 const appFiltersElement = appHeaderElement.querySelector('.trip-controls__filters');
 const appEventsElement = appMainElement.querySelector('.trip-events');
-const data = getPoints(15);
-const points = data.map((element) => (
-  {
-    price: element.basePrice,
-    dispatchDate: dayjs(element.dateFrom).format('DD/MM/YY'),
-    dispatchTime: dayjs(element.dateFrom).format('HH:mm'),
-    arrivalDate: dayjs(element.dateTo).format('DD/MM/YY'),
-    arrivalTime: dayjs(element.dateTo).format('HH:mm'),
-    eventDay: dayjs(element.dateTo).format('MMM DD'),
-    dateClass: dayjs(element.dateFrom).format('YYYY-MM-DD'),
-    dispatchTimeClass: dayjs(element.dateFrom).format('YYYY-MM-DDTHH:mm'),
-    arrivalTimeClass: dayjs(element.dateTo).format('YYYY-MM-DDTHH:mm'),
-    duration: calculateDuration(element.dateFrom, element.dateTo),
-    type: element.type,
-    offers: element.offers,
-    destination: element.destination,
-  }
-));
+const points = getPoints(15);
+const routeInfo = getRouteInfo(points);
+const renderTripInfo = (data) => {
+  const tripInfoComponent = new TripInfoView();
+  render(appHeaderElement, tripInfoComponent.getElement(), renderPosition.AFTERBEGIN);
+  render(tripInfoComponent.getElement(), new RouteInfoView(data).getElement(), renderPosition.AFTERBEGIN);
+};
+const renderTripEvents = (data) => {
+  const tripEventsComponent = new TripEventsView();
+  render(appEventsElement, tripEventsComponent.getElement(), renderPosition.BEFOREEND);
 
-const [...cities] = new Set(data.map((element) => element.destination.name));
-const route = cities.join(' — ');
+  data.forEach((point) => {
+    const routePointComponent = new RoutePointView(point);
+    const routePointFormComponent = new RoutePointFormView(point);
+    const replaceItemToForm = () => {
+      tripEventsComponent.getElement().replaceChild(routePointFormComponent.getElement(), routePointComponent.getElement());
+    };
 
-render(appHeaderElement, createTripInfoTemplate(route), 'afterbegin');
-render(appNavigationElement, createAppMenuTemplate(), 'beforeend');
-render(appFiltersElement, createAppFiltersTemplate(), 'beforeend');
-render(appEventsElement, createAppSortTemplate(), 'beforeend');
-render(appEventsElement, createTripEventsTemplate(points), 'beforeend');
+    const replaceFormToItem = () => {
+      tripEventsComponent.getElement().replaceChild(routePointComponent.getElement(), routePointFormComponent.getElement());
+    };
+
+    routePointComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceItemToForm);
+    routePointFormComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceFormToItem);
+    routePointFormComponent.getElement().querySelector('.event__save-btn').addEventListener('click', replaceFormToItem);
+    render(tripEventsComponent.getElement(), routePointComponent.getElement(), renderPosition.BEFOREEND);
+  });
+};
+
+render(appNavigationElement, new AppMenuView().getElement(), renderPosition.BEFOREEND);
+render(appFiltersElement, new AppFiltersView().getElement(), renderPosition.BEFOREEND);
+render(appEventsElement, new AppSortView().getElement(), renderPosition.AFTERBEGIN);
+renderTripInfo(routeInfo);
+renderTripEvents(points);

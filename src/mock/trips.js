@@ -1,11 +1,6 @@
 import dayjs from 'dayjs';
+import { getRandomInteger, transformData } from '../utils.js';
 
-const getRandomInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
-};
 
 const generateRandomEvent = () => {
   const events = [
@@ -68,11 +63,6 @@ const generateTime = () => {
 
   const dispatchDate =  dayjs().add(duration.minutes, 'minutes').add(duration.hours, 'hours').add(duration.days, 'days');
   const arrivalDate = dispatchDate.add(duration.minutes, 'minutes').add(duration.hours, 'hours').add(duration.days, 'days');
-  /* const dispatchDay = dispatchDate.format('DD/MM/YY');
-  const eventDay = dispatchDate.format('MMM DD');
-  const dispatchTime = dispatchDate.format('HH:mm');
-  const arrivalDay = arrivalDate.format('DD/MM/YY');
-  const arrivalTime = arrivalDate.format('HH:mm'); */
   const difference = arrivalDate.diff(dispatchDate, 'minutes');
   const setDurationFormat = () => {
     const template = dayjs('1666-01-01');
@@ -93,15 +83,8 @@ const generateTime = () => {
   };
   setDurationFormat();
   return {
-    /* dispatchDate: dispatchDay,
-    dispatchTime: dispatchTime,
-    arrivalDate: arrivalDay,
-    arrivalTime: arrivalTime,
-    eventDay: eventDay,
-    */
     dispatch: dispatchDate.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     arrival: arrivalDate.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-    //duration: duration.total,
   };
 };
 
@@ -296,5 +279,6 @@ const generateMock = () => {
 generateMock();
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
-  return mocks.sort((a, b) => a.dateFrom > b.dateFrom);
+  mocks.sort((a, b) => a.dateFrom > b.dateFrom);
+  return transformData(mocks);
 };

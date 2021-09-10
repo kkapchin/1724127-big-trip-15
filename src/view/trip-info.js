@@ -1,12 +1,28 @@
-import { createRouteInfoTemplate } from './route-info.js';
-import { createTotalCostTemplate } from './total-cost-info.js';
+import { createElement } from '../utils.js';
 
-export const createTripInfoTemplate = (route) => (
+const createTripInfoTemplate = () => (
   `<section class="trip-main__trip-info  trip-info">
-    <div class="trip-info__main">
-      ${createRouteInfoTemplate(route)}
-    </div>
-
-    ${createTotalCostTemplate()}
   </section>`
 );
+
+export default class TripInfo {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate();
+  }
+
+  getElement() {
+    if(!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
