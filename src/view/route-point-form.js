@@ -153,10 +153,32 @@ export default class RoutePointForm extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
+    this._rollupClickHandler = this._rollupClickHandler.bind(this);
+    this._saveClickHandler = this._saveClickHandler.bind(this);
   }
 
   getTemplate() {
     return createNewPoint(this._point);
+  }
+
+  _rollupClickHandler(event) {
+    event.preventDefault();
+    this._callback.rollupClick();
+  }
+
+  _saveClickHandler(event) {
+    event.preventDefault();
+    this._callback.saveClick();
+  }
+
+  setRollupClickHandler(callback) {
+    this._callback.rollupClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupClickHandler);
+  }
+
+  setSaveClickHandler(callback) {
+    this._callback.saveClick = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._saveClickHandler);
   }
 }
 

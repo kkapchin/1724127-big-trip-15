@@ -52,19 +52,18 @@ const renderTripEvents = (tripEvents) => {
       }
     };
 
-    const replaceFormToItem = () => {
-      replaceElements(routePointComponent.getElement(), routePointFormComponent.getElement());
-      document.removeEventListener('keydown', documentKeydownHandler);
-    };
-
-    const replaceItemToForm = () => {
+    routePointComponent.setRollupClickHandler(() => {
       replaceElements(routePointFormComponent.getElement(), routePointComponent.getElement());
       document.addEventListener('keydown', documentKeydownHandler);
-    };
-
-    routePointComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceItemToForm);
-    routePointFormComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceFormToItem);
-    routePointFormComponent.getElement().querySelector('.event__save-btn').addEventListener('click', replaceFormToItem);
+    });
+    routePointFormComponent.setRollupClickHandler(() => {
+      replaceElements(routePointComponent.getElement(), routePointFormComponent.getElement());
+      document.removeEventListener('keydown', documentKeydownHandler);
+    });
+    routePointFormComponent.setSaveClickHandler(() => {
+      replaceElements(routePointComponent.getElement(), routePointFormComponent.getElement());
+      document.removeEventListener('keydown', documentKeydownHandler);
+    });
     render(tripEventsComponent.getElement(), routePointComponent.getElement(), renderPosition.BEFOREEND);
   });
 };
