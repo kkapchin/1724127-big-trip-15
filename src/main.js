@@ -21,35 +21,39 @@ const appFiltersElement = appHeaderElement.querySelector('.trip-controls__filter
 const appEventsElement = appMainElement.querySelector('.trip-events');
 const points = getPoints(15);
 
-const renderTripInfo = (events) => {
+const renderTripInfo = (tripEvents) => {
   const tripInfoComponent = new TripInfoView();
   render(appHeaderElement, tripInfoComponent.getElement(), renderPosition.AFTERBEGIN);
-  render(tripInfoComponent.getElement(), new RouteInfoView(events).getElement(), renderPosition.AFTERBEGIN);
+  render(tripInfoComponent.getElement(), new RouteInfoView(tripEvents).getElement(), renderPosition.AFTERBEGIN);
 };
-const renderTripEvents = (data) => {
+const renderTripEvents = (tripEvents) => {
   const tripEventsComponent = new TripEventsView();
   render(appEventsElement, tripEventsComponent.getElement(), renderPosition.BEFOREEND);
 
-  data.forEach((point) => {
+  tripEvents.forEach((point) => {
     const routePointComponent = new RoutePointView(point);
     const routePointFormComponent = new RoutePointFormView(point);
 
-
-    const replaceFormToItem = () => {
-      tripEventsComponent.getElement().replaceChild(routePointComponent.getElement(), routePointFormComponent.getElement());
+    const replaceElements = (newElement, currentElement) => {
+      tripEventsComponent.getElement().replaceChild(newElement, currentElement);
     };
 
-    const documentEscKeydownHandler = (event) => {
+    const documentKeydownHandler = (event) => {
       if(isEscEvent(event)) {
         event.preventDefault();
-        replaceFormToItem();
-        document.removeEventListener('keydown', documentEscKeydownHandler);
+        replaceElements(routePointComponent.getElement(), routePointFormComponent.getElement());
+        document.removeEventListener('keydown', documentKeydownHandler);
       }
     };
 
+    const replaceFormToItem = () => {
+      replaceElements(routePointComponent.getElement(), routePointFormComponent.getElement());
+      document.removeEventListener('keydown', documentKeydownHandler);
+    };
+
     const replaceItemToForm = () => {
-      tripEventsComponent.getElement().replaceChild(routePointFormComponent.getElement(), routePointComponent.getElement());
-      document.addEventListener('keydown', documentEscKeydownHandler);
+      replaceElements(routePointFormComponent.getElement(), routePointComponent.getElement());
+      document.addEventListener('keydown', documentKeydownHandler);
     };
 
     routePointComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', replaceItemToForm);
