@@ -1,4 +1,4 @@
-import { createElement } from '../utils/create-element.js';
+import AbstractView from './abstract.js';
 
 const renderOffers = (offers) => {
   if(!offers) {
@@ -50,25 +50,13 @@ const createRoutePointsTemplate = (point) => (
     </div>
   </li>`);
 
-export default class RoutePoints {
+export default class RoutePoint extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
   }
 
   getTemplate() {
     return createRoutePointsTemplate(this._point);
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

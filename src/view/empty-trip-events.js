@@ -1,34 +1,32 @@
 import { createElement } from '../utils/create-element.js';
+import AbstractView from './abstract.js';
 
 const createEmptyTripElement = (value) => `<p class="trip-events__msg">${value}</p>`;
 
-export default class EmptyTrip {
+export default class EmptyTrip extends AbstractView {
   constructor() {
-    this._element = null;
-    this._everythingValue = 'Click New Event to create your first point';
-    this._futureValue = 'There are no future events now';
-    this._pastValue = 'There are no past events now';
+    super();
+    this._everythingFilterMessage = 'Click New Event to create your first point';
+    this._futureFilterMessage = 'There are no future events now';
+    this._pastFilterMessage = 'There are no past events now';
   }
 
-  getTemplate(value) {
-    return createEmptyTripElement(value);
+  getTemplate(message) {
+    return createEmptyTripElement(message);
   }
 
-  getElement(filter) {
-    switch(filter) {
+  getElement(currentFilter) {
+    switch(currentFilter) {
       case 'Everything':
-        this._element = createElement(createEmptyTripElement(this._everythingValue));
+        this._element = createElement(createEmptyTripElement(this._everythingFilterMessage));
         return this._element;
       case 'Future':
-        this._element = createElement(createEmptyTripElement(this._futureValue));
+        this._element = createElement(createEmptyTripElement(this._futureFilterMessage));
         return this._element;
       case 'Past':
-        this._element = createElement(createEmptyTripElement(this._pastValue));
+        this._element = createElement(createEmptyTripElement(this._pastFilterMessage));
         return this._element;
     }
   }
-
-  removeElement() {
-    this._element = null;
-  }
 }
+

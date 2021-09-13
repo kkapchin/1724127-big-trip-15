@@ -1,4 +1,4 @@
-import { createElement } from '../utils/create-element.js';
+import AbstractView from './abstract.js';
 
 const renderPhotos = (photos) => {
   if(!photos) {
@@ -149,25 +149,14 @@ const createNewPoint = (point) => (
   </li>`
 );
 
-export default class RoutePointForm {
+export default class RoutePointForm extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
   }
 
   getTemplate() {
     return createNewPoint(this._point);
   }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
+

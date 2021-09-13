@@ -26,26 +26,3 @@ export default class AppFilters extends AbstractView {
     return createAppFiltersTemplate();
   }
 }
-
-/* export default class AppFilters {
-  constructor() {
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createAppFiltersTemplate();
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-}
- */

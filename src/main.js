@@ -76,6 +76,6 @@ if(!isEmptyEventsList(points)) {
   renderTripInfo(points);
   renderTripEvents(points);
 } else {
-  const FILTER = 'Everything';
-  render(appEventsElement, new EmptyTripView().getElement(FILTER), renderPosition.BEFOREEND);
+  const DEFAULT_FILTER = 'Everything';
+  render(appEventsElement, new EmptyTripView().getElement(DEFAULT_FILTER), renderPosition.BEFOREEND);
 }
