@@ -1,5 +1,7 @@
 import { getPoints } from './mock/trips.js';
-import { getRouteInfo, render, renderPosition } from './utils.js';
+import { getRouteInfo } from './utils/get-route-info.js';
+import { render } from './utils/render.js';
+import { renderPosition } from './utils/render-position.js';
 import AppFiltersView from './view/app-filters.js';
 import AppMenuView from './view/app-menu.js';
 import AppSortView from './view/app-sort.js';

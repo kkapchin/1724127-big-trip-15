@@ -1,4 +1,4 @@
-import { createElement } from '../utils.js';
+import { createElement } from '../utils/create-element.js';
 
 const createTripInfoTemplate = () => (
   `<section class="trip-main__trip-info  trip-info">
