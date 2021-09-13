@@ -10,7 +10,9 @@ import TripInfoView from './view/trip-info.js';
 import RouteInfoView from './view/route-info.js';
 import RoutePointView from './view/route-point.js';
 import RoutePointFormView from './view/route-point-form.js';
+import EmptyTripView from './view/empty-trip-events.js';
 import { isEscEvent } from './utils/is-escape-event.js';
+import { isEmptyEventsList } from './utils/is-empty-events-list.js';
 
 const appMainElement = document.querySelector('.page-body');
 const appHeaderElement = appMainElement.querySelector('.trip-main');
@@ -18,7 +20,7 @@ const appNavigationElement = appHeaderElement.querySelector('.trip-controls__nav
 const appFiltersElement = appHeaderElement.querySelector('.trip-controls__filters');
 const appEventsElement = appMainElement.querySelector('.trip-events');
 const points = getPoints(15);
-const routeInfo = getRouteInfo(points);
+
 const renderTripInfo = (events) => {
   const tripInfoComponent = new TripInfoView();
   render(appHeaderElement, tripInfoComponent.getElement(), renderPosition.AFTERBEGIN);
@@ -60,5 +62,11 @@ const renderTripEvents = (data) => {
 render(appNavigationElement, new AppMenuView().getElement(), renderPosition.BEFOREEND);
 render(appFiltersElement, new AppFiltersView().getElement(), renderPosition.BEFOREEND);
 render(appEventsElement, new AppSortView().getElement(), renderPosition.AFTERBEGIN);
-renderTripInfo(routeInfo);
-renderTripEvents(points);
+if(!isEmptyEventsList(points)) {
+  const routeInfo = getRouteInfo(points);
+  renderTripInfo(routeInfo);
+  renderTripEvents(points);
+} else {
+  const FILTER = 'Everything';
+  render(appEventsElement, new EmptyTripView().getElement(FILTER), renderPosition.BEFOREEND);
+}
