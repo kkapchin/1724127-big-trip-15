@@ -11,6 +11,7 @@ import RouteInfoView from './view/route-info.js';
 import RoutePointView from './view/route-point.js';
 import RoutePointFormView from './view/route-point-form.js';
 import EmptyTripView from './view/empty-trip-events.js';
+import TotalCostView from './view/total-cost-info.js';
 import { isEscEvent } from './utils/is-escape-event.js';
 import { isEmptyEventsList } from './utils/is-empty-events-list.js';
 
@@ -23,9 +24,14 @@ const points = getPoints(15);
 
 const renderTripInfo = (tripEvents) => {
   const tripInfoComponent = new TripInfoView();
+  const routeInfo = getRouteInfo(points);
+  const DEFAULT_TOTAL_COST = 0;
+  const totalCost = tripEvents.reduce((total, tripEvent) => total + tripEvent.price, DEFAULT_TOTAL_COST);
   render(appHeaderElement, tripInfoComponent.getElement(), renderPosition.AFTERBEGIN);
-  render(tripInfoComponent.getElement(), new RouteInfoView(tripEvents).getElement(), renderPosition.AFTERBEGIN);
+  render(tripInfoComponent.getElement(), new RouteInfoView(routeInfo).getElement(), renderPosition.AFTERBEGIN);
+  render(tripInfoComponent.getElement(), new TotalCostView(totalCost).getElement(), renderPosition.BEFOREEND);
 };
+
 const renderTripEvents = (tripEvents) => {
   const tripEventsComponent = new TripEventsView();
   render(appEventsElement, tripEventsComponent.getElement(), renderPosition.BEFOREEND);
@@ -67,8 +73,7 @@ render(appNavigationElement, new AppMenuView().getElement(), renderPosition.BEFO
 render(appFiltersElement, new AppFiltersView().getElement(), renderPosition.BEFOREEND);
 render(appEventsElement, new AppSortView().getElement(), renderPosition.AFTERBEGIN);
 if(!isEmptyEventsList(points)) {
-  const routeInfo = getRouteInfo(points);
-  renderTripInfo(routeInfo);
+  renderTripInfo(points);
   renderTripEvents(points);
 } else {
   const FILTER = 'Everything';
