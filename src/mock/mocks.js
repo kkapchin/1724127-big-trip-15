@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { transformPoints } from '../utils/transform-points.js';
-import { getRandomInteger } from '../utils/get-random-integer.js';
+import { transformPoints } from '../utils/points.js';
+import { getRandomInteger } from '../utils/common.js';
 
 
 const generateRandomEvent = () => {

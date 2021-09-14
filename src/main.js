@@ -1,9 +1,6 @@
-import { getPoints } from './mock/trips.js';
-import { getRouteInfo } from './utils/get-route-info.js';
+import { getPoints } from './mock/mocks.js';
+import { getRouteInfo, isEmptyEventsList } from './utils/points.js';
 import { RenderPosition, render } from './utils/render.js';
-import AppFiltersView from './view/app-filters.js';
-import AppMenuView from './view/app-menu.js';
-import AppSortView from './view/app-sort.js';
 import TripEventsView from './view/trip-events.js';
 import TripInfoView from './view/trip-info.js';
 import RouteInfoView from './view/route-info.js';
@@ -11,16 +8,17 @@ import RoutePointView from './view/route-point.js';
 import RoutePointFormView from './view/route-point-form.js';
 import EmptyTripView from './view/empty-trip-events.js';
 import TotalCostView from './view/total-cost-info.js';
-import { isEscEvent } from './utils/is-escape-event.js';
-import { isEmptyEventsList } from './utils/is-empty-events-list.js';
+import { isEscEvent } from './utils/keyboard-events.js';
+
+import TripPresenter from './presenter/trip.js';
 
 const DEFAULT_TOTAL_COST = 0;
-const appMainElement = document.querySelector('.page-body');
-const appHeaderElement = appMainElement.querySelector('.trip-main');
-const appNavigationElement = appHeaderElement.querySelector('.trip-controls__navigation');
-const appFiltersElement = appHeaderElement.querySelector('.trip-controls__filters');
-const appEventsElement = appMainElement.querySelector('.trip-events');
+const appBodyElement = document.querySelector('.page-body');
+const appHeaderElement = appBodyElement.querySelector('.trip-main');
+const appEventsElement = appBodyElement.querySelector('.trip-events');
 const points = getPoints(15);
+
+const trip = new TripPresenter(appBodyElement);
 
 const renderTripInfo = (tripEvents) => {
   const tripInfoComponent = new TripInfoView();
@@ -67,9 +65,7 @@ const renderTripEvents = (tripEvents) => {
   });
 };
 
-render(appNavigationElement, new AppMenuView().getElement(), RenderPosition.BEFOREEND);
-render(appFiltersElement, new AppFiltersView().getElement(), RenderPosition.BEFOREEND);
-render(appEventsElement, new AppSortView().getElement(), RenderPosition.AFTERBEGIN);
+trip.init(points);
 if(!isEmptyEventsList(points)) {
   renderTripInfo(points);
   renderTripEvents(points);
