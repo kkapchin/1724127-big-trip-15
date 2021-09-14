@@ -1,4 +1,4 @@
-import { createElement } from '../utils.js';
+import AbstractView from './abstract.js';
 
 const renderPhotos = (photos) => {
   if(!photos) {
@@ -149,25 +149,36 @@ const createNewPoint = (point) => (
   </li>`
 );
 
-export default class RoutePointForm {
+export default class RoutePointForm extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
+    this._rollupClickHandler = this._rollupClickHandler.bind(this);
+    this._saveClickHandler = this._saveClickHandler.bind(this);
   }
 
   getTemplate() {
     return createNewPoint(this._point);
   }
 
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _rollupClickHandler(event) {
+    event.preventDefault();
+    this._callback.rollupClick();
   }
 
-  removeElement() {
-    this._element = null;
+  _saveClickHandler(event) {
+    event.preventDefault();
+    this._callback.saveClick();
+  }
+
+  setRollupClickHandler(callback) {
+    this._callback.rollupClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupClickHandler);
+  }
+
+  setSaveClickHandler(callback) {
+    this._callback.saveClick = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._saveClickHandler);
   }
 }
+

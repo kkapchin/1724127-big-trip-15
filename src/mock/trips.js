@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { getRandomInteger, transformData } from '../utils.js';
+import { transformPoints } from '../utils/transform-points.js';
+import { getRandomInteger } from '../utils/get-random-integer.js';
 
 
 const generateRandomEvent = () => {
@@ -280,5 +281,5 @@ generateMock();
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
   mocks.sort((a, b) => a.dateFrom > b.dateFrom);
-  return transformData(mocks);
+  return transformPoints(mocks);
 };
