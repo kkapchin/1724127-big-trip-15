@@ -75,6 +75,7 @@ export default class Point {
   }
 
   _replaceFormToDefault() {
+    this._pointFormComponent.reset(this._point);
     replace(this._pointComponent.getElement(), this._pointFormComponent.getElement());
     document.removeEventListener('keydown', this._documentKeydownHandler);
     this._mode = Mode.DEFAULT;
@@ -87,12 +88,14 @@ export default class Point {
   _documentKeydownHandler(event) {
     if(isEscEvent(event)) {
       event.preventDefault();
+      this._pointFormComponent.reset(this._point);
       this._replaceFormToDefault();
       document.removeEventListener('keydown', this._documentKeydownHandler);
     }
   }
 
   _handleFormRollupClick() {
+    this._pointFormComponent.reset(this._point);
     this._replaceFormToDefault();
   }
 

@@ -10,3 +10,8 @@ export const ButtonState = {
   ENABLED: 'enabled',
   DISABLED: 'disabled',
 };
+
+export const CheckboxState = {
+  TRUE: 'checked',
+  FALSE: '',
+};

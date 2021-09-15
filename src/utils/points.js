@@ -39,14 +39,16 @@ export const transformPoints = (points) => points.map((point) => (
     duration: calculateDuration(point.dateFrom, point.dateTo),
     type: point.type,
     offers: point.offers,
-    destination: point.destination,
+    city: point.destination.name,
+    pictures: point.destination.pictures,
+    description: point.destination.description,
     isFavorite: point.isFavorite,
     id: point.id,
   }
 ));
 
 export const getRouteInfo = (points) => {
-  const [...cities] = new Set(points.map((element) => element.destination.name));
+  const [...cities] = new Set(points.map((element) => element.city));
   return {
     cities: cities.join('&nbsp;&mdash;&nbsp;'),
     period: `${points[0].eventDay}&nbsp;&mdash;&nbsp;${points[points.length - 1].eventDay}`,

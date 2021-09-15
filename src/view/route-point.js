@@ -24,7 +24,7 @@ const createRoutePointsTemplate = (point) => (
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${point.type} ${point.destination.name}</h3>
+      <h3 class="event__title">${point.type} ${point.city}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${point.dispatchTimeClass}">${point.dispatchTime}</time>
@@ -62,16 +62,6 @@ export default class RoutePoint extends AbstractView {
     return createRoutePointsTemplate(this._point);
   }
 
-  _rollupClickHandler(event) {
-    event.preventDefault();
-    this._callback.rollupClick();
-  }
-
-  _favoriteClickHandler(event) {
-    event.preventDefault();
-    this._callback.favoriteClick();
-  }
-
   setRollupClickHandler(callback) {
     this._callback.rollupClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupClickHandler);
@@ -80,5 +70,15 @@ export default class RoutePoint extends AbstractView {
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._favoriteClickHandler);
+  }
+
+  _rollupClickHandler(event) {
+    event.preventDefault();
+    this._callback.rollupClick();
+  }
+
+  _favoriteClickHandler(event) {
+    event.preventDefault();
+    this._callback.favoriteClick();
   }
 }
