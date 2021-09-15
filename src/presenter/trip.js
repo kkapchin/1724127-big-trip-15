@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../utils/render.js';
+import { remove, render, RenderPosition } from '../utils/render.js';
 import { getRouteInfo, isEmptyEventsList } from '../utils/points.js';
 import AppMenuView from '../view/app-menu.js';
 import AppFiltersView from '../view/app-filters.js';
@@ -9,6 +9,7 @@ import RouteInfoView from '../view/route-info.js';
 import TotalCostView from '../view/total-cost-info.js';
 import PointPresenter from './point.js';
 import TripEventsView from '../view/trip-events.js';
+import { updateItem } from '../utils/common.js';
 
 const DEFAULT_TOTAL_COST = 0;
 const DEFAULT_FILTER = 'Future';
@@ -17,19 +18,23 @@ export default class Trip {
   constructor(bodyContainer) {
     this._bodyContainer = bodyContainer;
     this._mainContainer = this._bodyContainer.querySelector('.trip-main');
-    this._tripEventsContainer = this._bodyContainer.querySelector('.trip-events');
+    this._eventsContainer = this._bodyContainer.querySelector('.trip-events');
+    this._pointPresenters = new Map();
 
     this._appMenuComponent = new AppMenuView();
     this._appFiltersComponent = new AppFiltersView();
     this._appSortComponent = new AppSortView();
     this._emptyTripComponent = new EmptyTripView();
     this._tripInfoComponent = new TripInfoView();
-    this._tripEventsComponent = new TripEventsView();
+    this._eventsComponent = new TripEventsView();
+
+    this._handlePointChange = this._handlePointChange.bind(this);
   }
 
-  render(tripEvents) {
-    this._tripEvents = tripEvents.slice();
-    this._renderTrip(this._tripEvents);
+  render(points) {
+    this._points = points.slice();
+    this._sourcedPoints = points.slice();
+    this._renderTrip(this._points);
   }
 
   _renderAppMenu() {
@@ -43,30 +48,31 @@ export default class Trip {
   }
 
   _renderAppSort() {
-    render(this._tripEventsContainer, this._appSortComponent.getElement(), RenderPosition.AFTERBEGIN);
+    render(this._eventsContainer, this._appSortComponent.getElement(), RenderPosition.AFTERBEGIN);
   }
 
   _renderEmptyTrip() {
-    render(this._tripEventsContainer, this._emptyTripComponent.getElement(DEFAULT_FILTER), RenderPosition.BEFOREEND);
+    render(this._eventsContainer, this._emptyTripComponent.getElement(DEFAULT_FILTER), RenderPosition.BEFOREEND);
   }
 
   _renderTripInfo() {
-    this._routeInfo = getRouteInfo(this._tripEvents);
-    const totalCost = this._tripEvents.reduce((total, tripEvent) => total + tripEvent.price, DEFAULT_TOTAL_COST);
+    this._routeInfo = getRouteInfo(this._points);
+    const totalCost = this._points.reduce((total, tripEvent) => total + tripEvent.price, DEFAULT_TOTAL_COST);
     render(this._mainContainer, this._tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     render(this._tripInfoComponent.getElement(), new RouteInfoView(this._routeInfo).getElement(), RenderPosition.AFTERBEGIN);
     render(this._tripInfoComponent.getElement(), new TotalCostView(totalCost).getElement(), RenderPosition.BEFOREEND);
   }
 
-  _renderPoint(tripEvent) {
-    const pointPresenter = new PointPresenter(this._tripEventsListContainer);
-    pointPresenter.render(tripEvent);
+  _renderPoint(point) {
+    const pointPresenter = new PointPresenter(this._tripEventsListContainer, this._handlePointChange);
+    pointPresenter.render(point);
+    this._pointPresenters.set(point.id, pointPresenter);
   }
 
   _renderPoints() {
-    render(this._tripEventsContainer, this._tripEventsComponent.getElement(), RenderPosition.BEFOREEND);
-    this._tripEventsListContainer = this._tripEventsContainer.querySelector('.trip-events__list');
-    this._tripEvents
+    render(this._eventsContainer, this._eventsComponent.getElement(), RenderPosition.BEFOREEND);
+    this._tripEventsListContainer = this._eventsContainer.querySelector('.trip-events__list');
+    this._points
       .slice()
       .forEach((tripEvent) => this._renderPoint(tripEvent));
   }
@@ -75,11 +81,23 @@ export default class Trip {
     this._renderAppMenu();
     this._renderAppFilters();
     this._renderAppSort();
-    if(isEmptyEventsList(this._tripEvents)) {
+    if(isEmptyEventsList(this._points)) {
       this._renderEmptyTrip();
       return;
     }
     this._renderTripInfo();
     this._renderPoints();
+  }
+
+  _clearEventsList() {
+    /* this._pointPresenters.forEach((presenter) => presenter.destroy());
+    this._pointPresenters.clear(); */
+    remove(this._eventsComponent);
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._points = updateItem(this._points, updatedPoint);
+    this._sourcedPoints = updateItem(this._sourcedPoints, updatedPoint);
+    this._pointPresenters.get(updatedPoint.id).render(updatedPoint);
   }
 }

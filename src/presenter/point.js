@@ -9,11 +9,11 @@ import { isEscEvent } from '../utils/keyboard-events.js';
 }; */
 
 export default class Point {
-  constructor(eventListContainer) {
+  constructor(eventListContainer, updateView) {
     this._eventListContainer = eventListContainer;
-    this._prevPointComponent = null;
-    this._prevPointFormComponent = null;
-    //this._changeData = changeData;
+    this._pointComponent = null;
+    this._pointFormComponent = null;
+    this._updateView = updateView;
     //this._changeMode = changeMode;
 
     this._handleRollupClick = this._handleRollupClick.bind(this);
@@ -23,11 +23,11 @@ export default class Point {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
-  render(tripEvent) {
-    this._point = tripEvent;
+  render(point) {
+    this._point = point;
 
-    const prevPointComponent = this._prevPointComponent;
-    const prevPointFormComponent = this._prevPointFormComponent;
+    const prevPointComponent = this._pointComponent;
+    const prevPointFormComponent = this._pointFormComponent;
 
     this._pointComponent = new pointView(this._point);
     this._pointFormComponent = new pointFormView(this._point);
@@ -43,11 +43,11 @@ export default class Point {
     }
 
     if(this._eventListContainer.contains(prevPointComponent.getElement())) {
-      replace(this._pointComponent, prevPointComponent);
+      replace(this._pointComponent.getElement(), prevPointComponent.getElement());
     }
 
     if(this._eventListContainer.contains(prevPointFormComponent.getElement())) {
-      replace(this._pointFormComponent, prevPointFormComponent);
+      replace(this._pointFormComponent.getElement(), prevPointFormComponent.getElement());
     }
 
     remove(prevPointComponent);
@@ -83,6 +83,14 @@ export default class Point {
   }
 
   _handleFavoriteClick() {
-    //
+    this._updateView(
+      Object.assign(
+        {},
+        this._point,
+        {
+          isFavorite: !this._point.isFavorite,
+        },
+      ),
+    );
   }
 }
