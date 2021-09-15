@@ -10,15 +10,19 @@ export const calculateDuration = (start, end) => {
     days: `${dayjsDuration.format('DD')}D`,
     hours: `${dayjsDuration.format('HH')}H`,
     minutes: `${dayjsDuration.format('mm')}M`,
+    total: difference,
   };
   if(parseInt(duration.days, 10)) {
-    duration.full = `${duration.days} ${duration.hours} ${duration.minutes}`;
+    duration.view = `${duration.days} ${duration.hours} ${duration.minutes}`;
   } else if(!parseInt(duration.days, 10) && parseInt(duration.hours, 10)) {
-    duration.full = `${duration.hours} ${duration.minutes}`;
+    duration.view  = `${duration.hours} ${duration.minutes}`;
   } else {
-    duration.full = duration.minutes;
+    duration.view  = duration.minutes;
   }
-  return duration.full;
+  return {
+    view: duration.view,
+    total: duration.total,
+  } ;
 };
 
 export const transformPoints = (points) => points.map((point) => (

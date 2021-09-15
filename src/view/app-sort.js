@@ -1,4 +1,7 @@
+import { SortType } from '../const.js';
 import AbstractView from './abstract.js';
+
+const SORT_BUTTON_CLASS = 'trip-sort__btn';
 
 const createAppSortTemplate = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -30,7 +33,29 @@ const createAppSortTemplate = () => (
 );
 
 export default class AppSort extends AbstractView {
+  constructor() {
+    super();
+    this._sortClickHandler = this._sortClickHandler.bind(this);
+    this._currentSortType = SortType.DAY;
+  }
+
   getTemplate() {
     return createAppSortTemplate();
+  }
+
+  setSortClickHandler(callback) {
+    this._callback.sortClick = callback;
+    this.getElement().addEventListener('click', this._sortClickHandler);
+  }
+
+  _sortClickHandler(event) {
+    const sortType = event.target.textContent;
+    event.preventDefault();
+    if((event.target.className === SORT_BUTTON_CLASS) && !(this._currentSortType === sortType)) {
+      const sibling = event.target.previousElementSibling;
+      sibling.checked = !sibling.checked;
+      this._currentSortType = sortType;
+      this._callback.sortClick(sortType);
+    }
   }
 }
