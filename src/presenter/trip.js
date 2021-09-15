@@ -10,6 +10,7 @@ import TotalCostView from '../view/total-cost-info.js';
 import PointPresenter from './point.js';
 import TripEventsView from '../view/trip-events.js';
 import { updateItem } from '../utils/common.js';
+import { SortType } from '../const.js';
 
 const DEFAULT_TOTAL_COST = 0;
 const DEFAULT_FILTER = 'Future';
@@ -30,6 +31,7 @@ export default class Trip {
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortClick = this._handleSortClick.bind(this);
   }
 
   render(points) {
@@ -49,6 +51,7 @@ export default class Trip {
   }
 
   _renderAppSort() {
+    this._appSortComponent.setSortClickHandler(this._handleSortClick);
     render(this._eventsContainer, this._appSortComponent.getElement(), RenderPosition.AFTERBEGIN);
   }
 
@@ -91,8 +94,9 @@ export default class Trip {
   }
 
   _clearEventsList() {
-    /* this._pointPresenters.forEach((presenter) => presenter.destroy());
-    this._pointPresenters.clear(); */
+    //this._pointPresenters.forEach((presenter) => presenter.destroy());
+    this._pointPresenters.forEach((presenter) => presenter.resetView());
+    this._pointPresenters.clear();
     remove(this._eventsComponent);
   }
 
@@ -104,5 +108,27 @@ export default class Trip {
 
   _handleModeChange() {
     this._pointPresenters.forEach((presenter) => presenter.resetView());
+  }
+
+  _handleSortClick(sortType) {
+    if(sortType === SortType.EVENT || sortType === SortType.OFFERS) {
+      return;
+    }
+    this._sortPoints(sortType);
+    this._clearEventsList();
+    this._renderPoints();
+  }
+
+  _sortPoints(sortType) {
+    switch(sortType) {
+      case SortType.TIME:
+        this._points.sort((a, b) => a.duration.total < b.duration.total);
+        break;
+      case SortType.PRICE:
+        this._points.sort((a, b) => a.price < b.price);
+        break;
+      case SortType.DAY:
+        this._points.sort((a, b) => a.dispatchDate > b.dispatchDate);
+    }
   }
 }

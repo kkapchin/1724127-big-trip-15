@@ -31,7 +31,7 @@ const createRoutePointsTemplate = (point) => (
           &mdash;
           <time class="event__end-time" datetime="${point.arrivalTimeClass}">${point.arrivalTime}</time>
         </p>
-        <p class="event__duration">${point.duration}</p>
+        <p class="event__duration">${point.duration.view}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${point.price}</span>
