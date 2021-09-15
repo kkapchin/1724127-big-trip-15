@@ -36,6 +36,8 @@ export const transformPoints = (points) => points.map((point) => (
     type: point.type,
     offers: point.offers,
     destination: point.destination,
+    isFavorite: point.isFavorite,
+    id: point.id,
   }
 ));
 

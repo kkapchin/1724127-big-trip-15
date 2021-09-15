@@ -3,16 +3,18 @@ import { getRouteInfo, isEmptyEventsList } from '../utils/points.js';
 import AppMenuView from '../view/app-menu.js';
 import AppFiltersView from '../view/app-filters.js';
 import AppSortView from '../view/app-sort.js';
-import EmptyTripView from '../view/empty-trip-events.js';
+import EmptyTripView from '../view/no-trip-events.js';
 import TripInfoView from '../view/trip-info.js';
 import RouteInfoView from '../view/route-info.js';
 import TotalCostView from '../view/total-cost-info.js';
 import PointPresenter from './point.js';
 import TripEventsView from '../view/trip-events.js';
 
+const DEFAULT_TOTAL_COST = 0;
+const DEFAULT_FILTER = 'Future';
+
 export default class Trip {
   constructor(bodyContainer) {
-    this._DEFAULT_TOTAL_COST = 0;
     this._bodyContainer = bodyContainer;
     this._mainContainer = this._bodyContainer.querySelector('.trip-main');
     this._tripEventsContainer = this._bodyContainer.querySelector('.trip-events');
@@ -45,13 +47,12 @@ export default class Trip {
   }
 
   _renderEmptyTrip() {
-    const DEFAULT_FILTER = 'Future';
     render(this._tripEventsContainer, this._emptyTripComponent.getElement(DEFAULT_FILTER), RenderPosition.BEFOREEND);
   }
 
   _renderTripInfo() {
     this._routeInfo = getRouteInfo(this._tripEvents);
-    const totalCost = this._tripEvents.reduce((total, tripEvent) => total + tripEvent.price, this._DEFAULT_TOTAL_COST);
+    const totalCost = this._tripEvents.reduce((total, tripEvent) => total + tripEvent.price, DEFAULT_TOTAL_COST);
     render(this._mainContainer, this._tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     render(this._tripInfoComponent.getElement(), new RouteInfoView(this._routeInfo).getElement(), RenderPosition.AFTERBEGIN);
     render(this._tripInfoComponent.getElement(), new TotalCostView(totalCost).getElement(), RenderPosition.BEFOREEND);

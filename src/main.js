@@ -7,3 +7,4 @@ const points = getPoints(TEMPORARY_POINTS_QUANTITY);
 const trip = new TripPresenter(appBodyElement);
 
 trip.render(points);
+console.log(points)
