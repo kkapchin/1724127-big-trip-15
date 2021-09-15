@@ -152,7 +152,9 @@ const createNewPoint = (point) => (
 export default class RoutePointForm extends AbstractView {
   constructor(point) {
     super();
+    this._data = RoutePointForm.parsePointToData(point);
     this._point = point;
+
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._saveClickHandler = this._saveClickHandler.bind(this);
   }
@@ -179,6 +181,10 @@ export default class RoutePointForm extends AbstractView {
   setSaveClickHandler(callback) {
     this._callback.saveClick = callback;
     this.getElement().querySelector('.event__save-btn').addEventListener('click', this._saveClickHandler);
+  }
+
+  static parsePointToData(/* point */) {
+    //
   }
 }
 

@@ -5,3 +5,8 @@ export const SortType = {
   PRICE: 'Price',
   OFFERS: 'Offers',
 };
+
+export const ButtonState = {
+  ENABLED: 'enabled',
+  DISABLED: 'disabled',
+};

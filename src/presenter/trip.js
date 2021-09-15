@@ -11,6 +11,7 @@ import PointPresenter from './point.js';
 import TripEventsView from '../view/trip-events.js';
 import { updateItem } from '../utils/common.js';
 import { SortType } from '../const.js';
+import NewEventBtnView from '../view/new-event.js';
 
 const DEFAULT_TOTAL_COST = 0;
 const DEFAULT_FILTER = 'Future';
@@ -28,10 +29,12 @@ export default class Trip {
     this._emptyTripComponent = new EmptyTripView();
     this._tripInfoComponent = new TripInfoView();
     this._eventsComponent = new TripEventsView();
+    this._newEventBtnComponent = new NewEventBtnView();
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortClick = this._handleSortClick.bind(this);
+    this._handleNewEventBtnClick = this._handleNewEventBtnClick.bind(this);
   }
 
   render(points) {
@@ -85,12 +88,24 @@ export default class Trip {
     this._renderAppMenu();
     this._renderAppFilters();
     this._renderAppSort();
+    this._renderNewEventBtn();
     if(isEmptyEventsList(this._points)) {
       this._renderEmptyTrip();
       return;
     }
     this._renderTripInfo();
     this._renderPoints();
+  }
+
+  _renderNewEventBtn() {
+    this._newEventBtnComponent.setNewEventBtnClickHandler(this._handleNewEventBtnClick);
+    render(this._mainContainer, this._newEventBtnComponent.getElement(), RenderPosition.BEFOREEND);
+  }
+
+  _handleNewEventBtnClick(event) {
+    event.target.disabled = !event.target.disabled;
+    //remove(this._eventsComponent);
+    //remove(this._emptyTripComponent);
   }
 
   _clearEventsList() {
