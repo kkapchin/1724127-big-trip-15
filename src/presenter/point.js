@@ -3,18 +3,20 @@ import pointFormView from '../view/route-point-form.js';
 import { remove, render, RenderPosition, replace } from '../utils/render.js';
 import { isEscEvent } from '../utils/keyboard-events.js';
 
-/* const Mode = {
+const Mode = {
   DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-}; */
+  FORM: 'FORM',
+};
 
 export default class Point {
-  constructor(eventListContainer, updateView) {
+  constructor(eventListContainer, updateView, changeMode) {
     this._eventListContainer = eventListContainer;
+    this._updateView = updateView;
+    this._changeMode = changeMode;
+
     this._pointComponent = null;
     this._pointFormComponent = null;
-    this._updateView = updateView;
-    //this._changeMode = changeMode;
+    this._mode = Mode.DEFAULT;
 
     this._handleRollupClick = this._handleRollupClick.bind(this);
     this._documentKeydownHandler = this._documentKeydownHandler.bind(this);
@@ -54,31 +56,48 @@ export default class Point {
     remove(prevPointFormComponent);
   }
 
+  resetView() {
+    if(!(this._mode === Mode.DEFAULT)) {
+      this._replaceFormToDefault();
+    }
+  }
+
   destroy() {
     remove(this._pointComponent);
     remove(this._pointFormComponent);
   }
 
-  _handleRollupClick() {
+  _replaceDefaultToForm() {
     replace(this._pointFormComponent.getElement(), this._pointComponent.getElement());
     document.addEventListener('keydown', this._documentKeydownHandler);
+    this._changeMode();
+    this._mode = Mode.FORM;
+  }
+
+  _replaceFormToDefault() {
+    replace(this._pointComponent.getElement(), this._pointFormComponent.getElement());
+    document.removeEventListener('keydown', this._documentKeydownHandler);
+    this._mode = Mode.DEFAULT;
+  }
+
+  _handleRollupClick() {
+    this._replaceDefaultToForm();
   }
 
   _documentKeydownHandler(event) {
     if(isEscEvent(event)) {
       event.preventDefault();
-      replace(this._pointComponent.getElement(), this._pointFormComponent.getElement());
+      this._replaceFormToDefault();
       document.removeEventListener('keydown', this._documentKeydownHandler);
     }
   }
 
   _handleFormRollupClick() {
-    replace(this._pointComponent.getElement(), this._pointFormComponent.getElement());
-    document.removeEventListener('keydown', this._documentKeydownHandler);
+    this._replaceFormToDefault();
   }
 
   _handleSaveClick() {
-    replace(this._pointComponent.getElement(), this._pointFormComponent.getElement());
+    this._replaceFormToDefault();
     document.removeEventListener('keydown', this._documentKeydownHandler);
   }
 
