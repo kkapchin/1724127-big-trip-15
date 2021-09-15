@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
-import { transformPoints } from '../utils/transform-points.js';
-import { getRandomInteger } from '../utils/get-random-integer.js';
+import { transformPoints } from '../utils/points.js';
+import { getRandomInteger } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 
 
 const generateRandomEvent = () => {
@@ -270,7 +271,7 @@ const generateMock = () => {
     dateFrom: time.dispatch,
     dateTo: time.arrival,
     destination: destination,
-    id: '0',
+    id: nanoid(),
     isFavorite: false,
     offers: event.offers,
     type: event.type,

@@ -38,7 +38,7 @@ const createRoutePointsTemplate = (point) => (
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       ${renderOffers(point.offers)}
-      <button class="event__favorite-btn  event__favorite-btn--active" type="button">
+      <button class="event__favorite-btn ${point.isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -55,6 +55,7 @@ export default class RoutePoint extends AbstractView {
     super();
     this._point = point;
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -66,8 +67,18 @@ export default class RoutePoint extends AbstractView {
     this._callback.rollupClick();
   }
 
+  _favoriteClickHandler(event) {
+    event.preventDefault();
+    this._callback.favoriteClick();
+  }
+
   setRollupClickHandler(callback) {
     this._callback.rollupClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._rollupClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._favoriteClickHandler);
   }
 }
