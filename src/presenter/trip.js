@@ -94,7 +94,6 @@ export default class Trip {
   }
 
   _clearEventsList() {
-    //this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.forEach((presenter) => presenter.resetView());
     this._pointPresenters.clear();
     remove(this._eventsComponent);
@@ -128,7 +127,7 @@ export default class Trip {
         this._points.sort((a, b) => a.price < b.price);
         break;
       case SortType.DAY:
-        this._points.sort((a, b) => a.dispatchDate > b.dispatchDate);
+        this._points = this._points = this._sourcedPoints.slice();
     }
   }
 }
