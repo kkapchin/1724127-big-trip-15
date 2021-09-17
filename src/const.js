@@ -15,3 +15,11 @@ export const CheckboxState = {
   TRUE: 'checked',
   FALSE: '',
 };
+
+export const City = {
+  PERSEPOLIS: 'Persepolis',
+  AKSUM: 'Aksum',
+  ALEXANDRIA: 'Alexandria',
+  CARTHAGE: 'Carthage',
+  ROME: 'Rome',
+};

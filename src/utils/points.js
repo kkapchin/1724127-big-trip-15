@@ -25,7 +25,7 @@ export const calculateDuration = (start, end) => {
   } ;
 };
 
-export const transformPoints = (points) => points.map((point) => (
+export const transformToPoints = (points) => points.map((point) => (
   {
     price: point.basePrice,
     dispatchDate: dayjs(point.dateFrom).format('DD/MM/YY'),
@@ -39,9 +39,10 @@ export const transformPoints = (points) => points.map((point) => (
     duration: calculateDuration(point.dateFrom, point.dateTo),
     type: point.type,
     offers: point.offers,
-    city: point.destination.name,
+    destination: point.destination,
+    /* city: point.destination.name,
     pictures: point.destination.pictures,
-    description: point.destination.description,
+    description: point.destination.description, */
     isFavorite: point.isFavorite,
     id: point.id,
   }

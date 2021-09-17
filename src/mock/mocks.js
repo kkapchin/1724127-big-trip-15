@@ -1,59 +1,60 @@
 import dayjs from 'dayjs';
-import { transformPoints } from '../utils/points.js';
+import { transformToPoints } from '../utils/points.js';
 import { getRandomInteger } from '../utils/common.js';
 import { nanoid } from 'nanoid';
+import { City } from '../const.js';
 
+const EVENTS = [
+  {
+    type: 'taxi',
+    price: getRandomInteger(20, 100),
+    offers: [
+      {title: 'Order Uber', price: getRandomInteger(15, 30)},
+    ],
+  },
+  {type: 'bus', price: getRandomInteger(5, 15)},
+  {type: 'train', price: getRandomInteger(100, 150)},
+  {type: 'ship', price: getRandomInteger(100, 150)},
+  {
+    type: 'drive',
+    price: getRandomInteger(50, 200),
+    offers: [
+      {title: 'Rent a car', price: getRandomInteger(200, 300)},
+    ],
+  },
+  {
+    type: 'check-in',
+    price: getRandomInteger(600, 1500),
+    offers: [
+      {title: 'Add breakfast', price: getRandomInteger(40, 60)},
+    ],
+  },
+  {
+    type: 'sightseeing',
+    price: getRandomInteger(50, 100),
+    offers: [
+      {title: 'Book tickets', price: getRandomInteger(35, 50)},
+      {title: 'Lunch in city', price: getRandomInteger(25, 35)},
+    ],
+  },
+  {type: 'restaurant', price: getRandomInteger(50, 200)},
+  {
+    type: 'flight',
+    price: getRandomInteger(160, 500),
+    offers: [
+      {title: 'Add luggage', price: getRandomInteger(30, 50)},
+      {title: 'Switch to comfort', price: getRandomInteger(80, 100)},
+      {title: 'Add meal', price: getRandomInteger(10, 20)},
+      {title: 'Choose seats', price: getRandomInteger(5, 10)},
+      {title: 'Travel by train', price: getRandomInteger(40, 50)},
+    ],
+  },
+];
 
 const generateRandomEvent = () => {
-  const events = [
-    {
-      type: 'taxi',
-      price: getRandomInteger(20, 100),
-      offers: [
-        {title: 'Order Uber', price: getRandomInteger(15, 30)},
-      ],
-    },
-    {type: 'bus', price: getRandomInteger(5, 15)},
-    {type: 'train', price: getRandomInteger(100, 150)},
-    {type: 'ship', price: getRandomInteger(100, 150)},
-    {
-      type: 'drive',
-      price: getRandomInteger(50, 200),
-      offers: [
-        {title: 'Rent a car', price: getRandomInteger(200, 300)},
-      ],
-    },
-    {
-      type: 'check-in',
-      price: getRandomInteger(600, 1500),
-      offers: [
-        {title: 'Add breakfast', price: getRandomInteger(40, 60)},
-      ],
-    },
-    {
-      type: 'sightseeing',
-      price: getRandomInteger(50, 100),
-      offers: [
-        {title: 'Book tickets', price: getRandomInteger(35, 50)},
-        {title: 'Lunch in city', price: getRandomInteger(25, 35)},
-      ],
-    },
-    {type: 'restaurant', price: getRandomInteger(50, 200)},
-    {
-      type: 'flight',
-      price: getRandomInteger(160, 500),
-      offers: [
-        {title: 'Add luggage', price: getRandomInteger(30, 50)},
-        {title: 'Switch to comfort', price: getRandomInteger(80, 100)},
-        {title: 'Add meal', price: getRandomInteger(10, 20)},
-        {title: 'Choose seats', price: getRandomInteger(5, 10)},
-        {title: 'Travel by train', price: getRandomInteger(40, 50)},
-      ],
-    },
-  ];
+  const randomIndex = getRandomInteger(0, EVENTS.length - 1);
 
-  const randomIndex = getRandomInteger(0, events.length - 1);
-  return events[randomIndex];
+  return EVENTS[randomIndex];
 };
 
 const generateTime = () => {
@@ -112,7 +113,7 @@ const generateDestination = () => {
   const cities = [
     {
       description: generateDescription(),
-      name: 'Persepolis',
+      name: City.PERSEPOLIS,
       pictures: [
         {
           src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
@@ -142,7 +143,7 @@ const generateDestination = () => {
     },
     {
       description: generateDescription(),
-      name: 'Aksum',
+      name: City.AKSUM,
       pictures: [
         {
           src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
@@ -168,7 +169,7 @@ const generateDestination = () => {
     },
     {
       description: generateDescription(),
-      name: 'Alexandria',
+      name: City.ALEXANDRIA,
       pictures: [
         {
           src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
@@ -198,7 +199,7 @@ const generateDestination = () => {
     },
     {
       description: generateDescription(),
-      name: 'Carthage',
+      name: City.CARTHAGE,
       pictures: [
         {
           src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
@@ -228,7 +229,7 @@ const generateDestination = () => {
     },
     {
       description: generateDescription(),
-      name: 'Rome',
+      name: City.ROME,
       pictures: [
         {
           src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
@@ -278,9 +279,173 @@ const generateMock = () => {
   };
 };
 
-generateMock();
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
   mocks.sort((a, b) => a.dateFrom > b.dateFrom);
-  return transformPoints(mocks);
+  return transformToPoints(mocks);
 };
+
+export const getDestinationByCity = (city) => {
+  const mock = generateMock();
+  mock.destination.name = city;
+  return transformToPoints(mock);
+};
+
+export const updateOffers = (eventType) => {
+  let offers = undefined;
+  EVENTS.forEach((event) => {
+    if(event.type === eventType) {
+      offers = event.offers;
+    }
+  });
+  return offers;
+};
+
+export const generateDestinations = () => [
+  {
+    description: generateDescription(),
+    name: City.PERSEPOLIS,
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'The Apadana',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'The Apadana',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'The Apadana',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'The Apadana',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'The Apadana',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'The Apadana',
+      },
+    ],
+  },
+  {
+    description: generateDescription(),
+    name: City.AKSUM,
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Obelisk of Axum',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Obelisk of Axum',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Obelisk of Axum',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Obelisk of Axum',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Obelisk of Axum',
+      },
+    ],
+  },
+  {
+    description: generateDescription(),
+    name: City.ALEXANDRIA,
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Alexandria parliament building',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Alexandria parliament building',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Alexandria parliament building',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Alexandria parliament building',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Alexandria parliament building',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Alexandria parliament building',
+      },
+    ],
+  },
+  {
+    description: generateDescription(),
+    name: City.CARTHAGE,
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Carthago delenda est',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Carthago delenda est',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Carthago delenda est',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Carthago delenda est',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Carthago delenda est',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'Carthago delenda est',
+      },
+    ],
+  },
+  {
+    description: generateDescription(),
+    name: City.ROME,
+    pictures: [
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'SPQR',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'SPQR',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'SPQR',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'SPQR',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'SPQR',
+      },
+      {
+        src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 1000)}`,
+        description: 'SPQR',
+      },
+    ],
+  },
+];
