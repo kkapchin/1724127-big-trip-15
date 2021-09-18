@@ -23,3 +23,8 @@ export const City = {
   CARTHAGE: 'Carthage',
   ROME: 'Rome',
 };
+
+export const Order = {
+  FIRST: 0,
+  SECOND: 1,
+};

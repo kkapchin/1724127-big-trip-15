@@ -1,7 +1,10 @@
-import { CheckboxState } from '../const.js';
+import { CheckboxState, Order } from '../const.js';
 import { generateDestinations, updateOffers } from '../mock/mocks.js';
 import { isEnterEvent, isEscEvent } from '../utils/keyboard-events.js';
 import SmartView from './smart.js';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const EVENT_TYPES = [
   'Taxi',
@@ -76,7 +79,7 @@ const createEventTypesTemplate = (actualType) => {
 };
 
 const createNewPoint = (data) => {
-  const {type, destination, dispatchDate, dispatchTime, arrivalDate, arrivalTime, price, offers, isOffers, isPictures} = data;
+  const {type, destination, dispatchDate, arrivalDate, price, offers, isOffers, isPictures} = data;
   const offersTemplate = isOffers ? createOffersTemplate(offers) : '';
   const picturesTemplate = isPictures ? createPicturesTemplate(destination.pictures) : '';
   const eventTypesTemplate = createEventTypesTemplate(type);
@@ -112,10 +115,10 @@ const createNewPoint = (data) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dispatchDate} ${dispatchTime}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dispatchDate}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${arrivalDate} ${arrivalTime}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${arrivalDate}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -148,6 +151,8 @@ export default class RoutePointForm extends SmartView {
   constructor(point) {
     super();
     this._data = RoutePointForm.parsePointToData(point);
+    this._datepickrDispatch = null;
+    this._datepickrArrival = null;
 
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._saveClickHandler = this._saveClickHandler.bind(this);
@@ -155,8 +160,11 @@ export default class RoutePointForm extends SmartView {
     this._destinationInputHandler = this._destinationInputHandler.bind(this);
     this._destinationFocusoutHandler = this._destinationFocusoutHandler.bind(this);
     this._destinationKeydownHandler = this._destinationKeydownHandler.bind(this);
+    this._dispatchDateChangeHandler = this._dispatchDateChangeHandler.bind(this);
+    this._arrivalDateChangeHandler = this._arrivalDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepickrDispatch();
   }
 
   getTemplate() {
@@ -171,6 +179,7 @@ export default class RoutePointForm extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepickrDispatch();
   }
 
   setRollupClickHandler(callback) {
@@ -255,6 +264,51 @@ export default class RoutePointForm extends SmartView {
       event.stopPropagation();
       event.preventDefault();
     }
+  }
+
+  _dispatchDateChangeHandler(userDispatchDate) {
+    this.updateData({
+      dispatchDate: userDispatchDate,
+    }, true);
+  }
+
+  _arrivalDateChangeHandler(userDispatchDate) {
+    this.updateData({
+      arrivalDate: userDispatchDate,
+    }, true);
+  }
+
+  _setDatepickrDispatch() {
+    const inputElements = this.getElement().querySelectorAll('.event__input--time');
+    const dispatchInputElement = inputElements[Order.FIRST];
+    const arrivalInputElement = inputElements[Order.SECOND];
+
+    if(this._datepickrDispatch) {
+      this._datepickrDispatch.destroy();
+      this._datepickrDispatch = null;
+    }
+
+    this._datepickrDispatch = flatpickr(
+      dispatchInputElement,
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        maxDate: this._data.arrivalDate,
+        defaultDate: this._data.dispatchDate,
+        onChange: this._dispatchDateChangeHandler,
+      },
+    );
+
+    this._datepickrArrival = flatpickr(
+      arrivalInputElement,
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        minDate: this._data.dispatchDate,
+        defaultDate: this._data.arrivalDate,
+        onChange: this._arrivalDateChangeHandler,
+      },
+    );
   }
 
   static parsePointToData(point) {
