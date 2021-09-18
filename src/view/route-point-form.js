@@ -162,6 +162,7 @@ export default class RoutePointForm extends SmartView {
     this._destinationKeydownHandler = this._destinationKeydownHandler.bind(this);
     this._dispatchDateChangeHandler = this._dispatchDateChangeHandler.bind(this);
     this._arrivalDateChangeHandler = this._arrivalDateChangeHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepickrDispatch();
@@ -196,6 +197,13 @@ export default class RoutePointForm extends SmartView {
       .addEventListener('click', this._saveClickHandler);
   }
 
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement()
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this._formDeleteClickHandler);
+  }
+
   _setInnerHandlers() {
     this.getElement()
       .querySelector('.event__rollup-btn')
@@ -215,6 +223,20 @@ export default class RoutePointForm extends SmartView {
     this.getElement()
       .querySelector('.event__input')
       .addEventListener('keydown', this._destinationKeydownHandler);
+    this.getElement()
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if(this._datepickrDispatch || this._datepickrArrival) {
+      this._datepickrDispatch.destroy();
+      this._datepickrArrival.destroy();
+      this._datepickrDispatch = null;
+      this._datepickrArrival = null;
+    }
   }
 
   _rollupClickHandler(event) {
@@ -283,9 +305,11 @@ export default class RoutePointForm extends SmartView {
     const dispatchInputElement = inputElements[Order.FIRST];
     const arrivalInputElement = inputElements[Order.SECOND];
 
-    if(this._datepickrDispatch) {
+    if(this._datepickrDispatch || this._datepickrArrival) {
       this._datepickrDispatch.destroy();
+      this._datepickrArrival.destroy();
       this._datepickrDispatch = null;
+      this._datepickrArrival = null;
     }
 
     this._datepickrDispatch = flatpickr(
@@ -309,6 +333,11 @@ export default class RoutePointForm extends SmartView {
         onChange: this._arrivalDateChangeHandler,
       },
     );
+  }
+
+  _formDeleteClickHandler(event) {
+    event.preventDefault();
+    this._callback.deleteClick(/* RoutePointForm.parseDataToPoint(this._data) */);
   }
 
   static parsePointToData(point) {

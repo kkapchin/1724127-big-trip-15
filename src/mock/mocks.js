@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { transformToPoints } from '../utils/points.js';
+import { SortBy, transformToPoints } from '../utils/points.js';
 import { getRandomInteger } from '../utils/common.js';
 import { nanoid } from 'nanoid';
 import { City } from '../const.js';
@@ -84,7 +84,9 @@ const generateTime = () => {
       duration.total = `${duration.minutes}M`;
     }
   };
+
   setDurationFormat();
+
   return {
     dispatch: dispatchDate.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     arrival: arrivalDate.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
@@ -281,7 +283,7 @@ const generateMock = () => {
 
 export const getPoints = (quantity) => {
   const mocks = new Array(quantity).fill().map(() => generateMock());
-  mocks.sort((a, b) => a.dateFrom > b.dateFrom);
+  mocks.sort(SortBy.DEFAULT);
   return transformToPoints(mocks);
 };
 

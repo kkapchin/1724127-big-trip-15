@@ -5,7 +5,7 @@ export const getRandomInteger = (a, b) => {
   return Math.floor(result);
 };
 
-export const updateItem = (items, update) => {
+/* export const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
   if(index === -1) {
@@ -17,4 +17,4 @@ export const updateItem = (items, update) => {
     update,
     ...items.slice(index + 1),
   ];
-};
+}; */

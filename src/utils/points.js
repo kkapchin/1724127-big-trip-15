@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
+import { Order } from '../const';
 
 dayjs.extend(durationPlugin);
 
@@ -51,13 +52,10 @@ export const transformToPoints = (points) => points.map((point) => (
 ));
 
 export const getRouteInfo = (points) => {
-  const FIRST_POINT = points[0];
+  const FIRST_POINT = points[Order.FIRST];
   const LAST_POINT = points[points.length - 1];
   const [...cities] = new Set(points.map((element) => element.destination.name));
-  /* return {
-    cities: cities.join('&nbsp;&mdash;&nbsp;'),
-    period: `${points[0].eventDay}&nbsp;&mdash;&nbsp;${points[points.length - 1].eventDay}`,
-  }; */
+
   return {
     cities: cities.length > THREE ? `${FIRST_POINT.destination.name}&nbsp;&mdash;&#8228;&#8228;&#8228;&mdash;&nbsp;${LAST_POINT.destination.name}` : cities.join('&nbsp;&mdash;&nbsp;'),
     period: `${FIRST_POINT.eventDay}&nbsp;&mdash;&nbsp;${LAST_POINT.eventDay}`,
@@ -66,3 +64,9 @@ export const getRouteInfo = (points) => {
 
 export const isEmptyEventsList = (points) =>
   points.length === 0 || points === undefined;
+
+export const SortBy = {
+  DEFAULT: (a, b) => a.dateFrom > b.dateFrom,
+  DURATION: (a, b) => a.duration.total < b.duration.total,
+  PRICE: (a, b) => a.price < b.price,
+};

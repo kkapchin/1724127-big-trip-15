@@ -2,6 +2,7 @@ import pointView from '../view/route-point.js';
 import pointFormView from '../view/route-point-form.js';
 import { remove, render, RenderPosition, replace } from '../utils/render.js';
 import { isEscEvent } from '../utils/keyboard-events.js';
+import { UpdateType, UserAction } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -23,6 +24,7 @@ export default class Point {
     this._handleFormRollupClick = this._handleFormRollupClick.bind(this);
     this._handleSaveClick = this._handleSaveClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeletePointClick = this._handleDeletePointClick.bind(this);
   }
 
   render(point) {
@@ -38,18 +40,19 @@ export default class Point {
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointFormComponent.setRollupClickHandler(this._handleFormRollupClick);
     this._pointFormComponent.setSaveClickHandler(this._handleSaveClick);
+    this._pointFormComponent.setDeleteClickHandler(this._handleDeletePointClick);
 
     if(prevPointComponent === null || prevPointFormComponent === null) {
-      render(this._eventListContainer, this._pointComponent.getElement(), RenderPosition.BEFOREEND);
+      render(this._eventListContainer, this._pointComponent, RenderPosition.BEFOREEND);
       return;
     }
 
     if(this._eventListContainer.contains(prevPointComponent.getElement())) {
-      replace(this._pointComponent.getElement(), prevPointComponent.getElement());
+      replace(this._pointComponent, prevPointComponent);
     }
 
     if(this._eventListContainer.contains(prevPointFormComponent.getElement())) {
-      replace(this._pointFormComponent.getElement(), prevPointFormComponent.getElement());
+      replace(this._pointFormComponent, prevPointFormComponent);
     }
 
     remove(prevPointComponent);
@@ -68,7 +71,7 @@ export default class Point {
   }
 
   _replaceDefaultToForm() {
-    replace(this._pointFormComponent.getElement(), this._pointComponent.getElement());
+    replace(this._pointFormComponent, this._pointComponent);
     document.addEventListener('keydown', this._documentKeydownHandler);
     this._changeMode();
     this._mode = Mode.FORM;
@@ -76,7 +79,7 @@ export default class Point {
 
   _replaceFormToDefault() {
     this._pointFormComponent.reset(this._point);
-    replace(this._pointComponent.getElement(), this._pointFormComponent.getElement());
+    replace(this._pointComponent, this._pointFormComponent);
     document.removeEventListener('keydown', this._documentKeydownHandler);
     this._mode = Mode.DEFAULT;
   }
@@ -106,6 +109,8 @@ export default class Point {
 
   _handleFavoriteClick() {
     this._updateView(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._point,
@@ -113,6 +118,14 @@ export default class Point {
           isFavorite: !this._point.isFavorite,
         },
       ),
+    );
+  }
+
+  _handleDeletePointClick() {
+    this._updateView(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      this._point,
     );
   }
 }

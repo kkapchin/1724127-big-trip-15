@@ -33,10 +33,10 @@ const createAppSortTemplate = () => (
 );
 
 export default class AppSort extends AbstractView {
-  constructor() {
+  constructor(currentSortType) {
     super();
     this._sortClickHandler = this._sortClickHandler.bind(this);
-    this._currentSortType = SortType.DAY;
+    this._currentSortType = currentSortType;
   }
 
   getTemplate() {

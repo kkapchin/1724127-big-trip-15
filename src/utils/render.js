@@ -7,6 +7,14 @@ export const RenderPosition = {
 
 
 export const render = (container, element, position) => {
+  if(container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  if(element instanceof Abstract) {
+    element = element.getElement();
+  }
+
   switch (position) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
