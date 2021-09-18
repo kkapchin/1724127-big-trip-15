@@ -53,7 +53,9 @@ export default class AppSort extends AbstractView {
     event.preventDefault();
     if((event.target.className === SORT_BUTTON_CLASS) && !(this._currentSortType === sortType)) {
       const sibling = event.target.previousElementSibling;
-      sibling.checked = !sibling.checked;
+      if(!(sortType === SortType.EVENT) && !(sortType === SortType.OFFERS)) {
+        sibling.checked = !sibling.checked;
+      }
       this._currentSortType = sortType;
       this._callback.sortClick(sortType);
     }
