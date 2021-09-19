@@ -1,4 +1,4 @@
-import { CheckboxState, SortType } from '../const.js';
+import { Checkbox, SortType } from '../const.js';
 import AbstractView from './abstract.js';
 
 const SORT_BUTTON_CLASS = 'trip-sort__btn';
@@ -6,7 +6,7 @@ const SORT_BUTTON_CLASS = 'trip-sort__btn';
 const createAppSortTemplate = (sortType) => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" ${sortType === SortType.DAY ? CheckboxState.TRUE : CheckboxState.FALSE}>
+      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" ${sortType === SortType.DAY ? Checkbox.TRUE : Checkbox.FALSE}>
       <label class="trip-sort__btn" for="sort-day">Day</label>
     </div>
 
@@ -16,12 +16,12 @@ const createAppSortTemplate = (sortType) => (
     </div>
 
     <div class="trip-sort__item  trip-sort__item--time">
-      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${sortType === SortType.TIME ? CheckboxState.TRUE : CheckboxState.FALSE}>
+      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${sortType === SortType.TIME ? Checkbox.TRUE : Checkbox.FALSE}>
       <label class="trip-sort__btn" for="sort-time">Time</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${sortType === SortType.PRICE ? CheckboxState.TRUE : CheckboxState.FALSE}>
+      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${sortType === SortType.PRICE ? Checkbox.TRUE : Checkbox.FALSE}>
       <label class="trip-sort__btn" for="sort-price">Price</label>
     </div>
 

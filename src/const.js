@@ -11,7 +11,7 @@ export const ButtonState = {
   DISABLED: 'disabled',
 };
 
-export const CheckboxState = {
+export const Checkbox = {
   TRUE: 'checked',
   FALSE: '',
 };
@@ -37,7 +37,7 @@ export const UserAction = {
 
 export const UpdateType = {
   PATCH: 'PATCH',
-  MINOR: 'MINOR',
+  FILTER: 'FILTER',
   MAJOR: 'MAJOR',
   FULL: 'FULL',
 };
@@ -52,4 +52,9 @@ export const FilterMessage = {
   ALL: 'Click New Event to create your first point',
   FUTURE: 'There are no future events now',
   PAST: 'There are no past events now',
+};
+
+export const Disabled = {
+  TRUE: 'disabled',
+  FALSE: '',
 };

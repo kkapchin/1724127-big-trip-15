@@ -66,14 +66,14 @@ export const transformToPoints = (points) => points.map((point) => (
 ));
 
 export const isEmptyEventsList = (points) =>
-  points.length === 0 || points === undefined;
+  points.length === 0 || (points === undefined || null);
 
 export const SortBy = {
   DEFAULT: (a, b) => a.dateFrom > b.dateFrom,
   DURATION: (a, b) => a.duration.total < b.duration.total,
   PRICE: (a, b) => a.price < b.price,
-  FILTER: {
+  /* FILTER: {
     FUTURE: (point) => dayjs(point.dateFrom) >= dayjs(),
     PAST: (point) => dayjs(point.dateTo) < dayjs(),
-  },
+  }, */
 };

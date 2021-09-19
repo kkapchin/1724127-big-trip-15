@@ -1,4 +1,4 @@
-import { CheckboxState, Order } from '../const.js';
+import { Checkbox, Order } from '../const.js';
 import { generateDestinations, updateOffers } from '../mock/mocks.js';
 import { isEnterEvent, isEscEvent } from '../utils/keyboard-events.js';
 import SmartView from './smart.js';
@@ -66,7 +66,7 @@ const createOffersTemplate = (offers) => {
 
 const createEventTypesTemplate = (actualType) => {
   const eventTypesElements = EVENT_TYPES.map((eventType) => {
-    const checkboxState = (eventType.toLowerCase() === actualType) ? CheckboxState.TRUE : CheckboxState.FALSE;
+    const checkboxState = (eventType.toLowerCase() === actualType) ? Checkbox.TRUE : Checkbox.FALSE;
     const type = eventType.toLowerCase();
 
     return `<div class="event__type-item">
@@ -181,8 +181,8 @@ export default class RoutePointForm extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepickrDispatch();
-    this.setSaveClickHandler();
-    this.setDeleteClickHandler();
+    this.setSaveClickHandler(this._callback.saveClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   setRollupClickHandler(callback) {
@@ -204,6 +204,25 @@ export default class RoutePointForm extends SmartView {
     this.getElement()
       .querySelector('.event__reset-btn')
       .addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if(this._datepickrDispatch) {
+      this._datepickrDispatch.destroy();
+      this._datepickrDispatch = null;
+    }
+
+    if(this._datepickrArrival) {
+      this._datepickrArrival.destroy();
+      this._datepickrArrival = null;
+    }
+  }
+
+  _rollupClickHandler(event) {
+    event.preventDefault();
+    this._callback.rollupClick();
   }
 
   _setInnerHandlers() {
@@ -228,22 +247,6 @@ export default class RoutePointForm extends SmartView {
     this.getElement()
       .querySelector('.event__reset-btn')
       .addEventListener('click', this._formDeleteClickHandler);
-  }
-
-  removeElement() {
-    super.removeElement();
-
-    if(this._datepickrDispatch || this._datepickrArrival) {
-      this._datepickrDispatch.destroy();
-      this._datepickrArrival.destroy();
-      this._datepickrDispatch = null;
-      this._datepickrArrival = null;
-    }
-  }
-
-  _rollupClickHandler(event) {
-    event.preventDefault();
-    this._callback.rollupClick();
   }
 
   _saveClickHandler(event) {
