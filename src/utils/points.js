@@ -1,10 +1,9 @@
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
-import { Order } from '../const';
 
 dayjs.extend(durationPlugin);
 
-const THREE = 3;
+//const THREE = 3;
 
 export const calculateDuration = (start, end) => {
   const difference = dayjs(end).diff(dayjs(start), 'minutes');
@@ -28,6 +27,17 @@ export const calculateDuration = (start, end) => {
   } ;
 };
 
+/* export const getRouteInfo = (points) => {
+  const FIRST_POINT = points[0];
+  const LAST_POINT = points[points.length - 1];
+  const [...cities] = new Set(points.map((element) => element.destination.name));
+
+  return {
+    cities: cities.length > THREE ? `${FIRST_POINT.destination.name}&nbsp;&mdash;&#8228;&#8228;&#8228;&mdash;&nbsp;${LAST_POINT.destination.name}` : cities.join('&nbsp;&mdash;&nbsp;'),
+    period: `${FIRST_POINT.eventDay}&nbsp;&mdash;&nbsp;${LAST_POINT.eventDay}`,
+  };
+}; */
+
 export const transformToPoints = (points) => points.map((point) => (
   {
     price: point.basePrice,
@@ -48,19 +58,9 @@ export const transformToPoints = (points) => points.map((point) => (
     description: point.destination.description, */
     isFavorite: point.isFavorite,
     id: point.id,
+    //routeInfo: getRouteInfo(points),
   }
 ));
-
-export const getRouteInfo = (points) => {
-  const FIRST_POINT = points[Order.FIRST];
-  const LAST_POINT = points[points.length - 1];
-  const [...cities] = new Set(points.map((element) => element.destination.name));
-
-  return {
-    cities: cities.length > THREE ? `${FIRST_POINT.destination.name}&nbsp;&mdash;&#8228;&#8228;&#8228;&mdash;&nbsp;${LAST_POINT.destination.name}` : cities.join('&nbsp;&mdash;&nbsp;'),
-    period: `${FIRST_POINT.eventDay}&nbsp;&mdash;&nbsp;${LAST_POINT.eventDay}`,
-  };
-};
 
 export const isEmptyEventsList = (points) =>
   points.length === 0 || points === undefined;

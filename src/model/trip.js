@@ -1,5 +1,7 @@
 import AbstractObserver from '../utils/abstract-observer.js';
+//import { getRouteInfo } from '../utils/points.js';
 
+const MAX_DISPLAYED_COUNT = 3;
 
 export default class Trip extends AbstractObserver{
   constructor() {
@@ -13,6 +15,17 @@ export default class Trip extends AbstractObserver{
 
   getPoints() {
     return this._points;
+  }
+
+  getRouteInfo() {
+    const FIRST_POINT = this._points[0];
+    const LAST_POINT = this._points[this._points.length - 1];
+    const [...cities] = new Set(this._points.map((element) => element.destination.name));
+
+    return {
+      cities: cities.length > MAX_DISPLAYED_COUNT ? `${FIRST_POINT.destination.name}&nbsp;&mdash;&#8228;&#8228;&#8228;&mdash;&nbsp;${LAST_POINT.destination.name}` : cities.join('&nbsp;&mdash;&nbsp;'),
+      period: `${FIRST_POINT.eventDay}&nbsp;&mdash;&nbsp;${LAST_POINT.eventDay}`,
+    };
   }
 
   updatePoint(updateType, update) {

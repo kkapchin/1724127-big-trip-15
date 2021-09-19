@@ -39,4 +39,17 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  FULL: 'FULL',
+};
+
+export const FilterType = {
+  ALL: 'Everything',
+  FUTURE: 'Future',
+  PAST: 'Past',
+};
+
+export const FilterMessage = {
+  ALL: 'Click New Event to create your first point',
+  FUTURE: 'There are no future events now',
+  PAST: 'There are no past events now',
 };

@@ -181,6 +181,8 @@ export default class RoutePointForm extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepickrDispatch();
+    this.setSaveClickHandler();
+    this.setDeleteClickHandler();
   }
 
   setRollupClickHandler(callback) {
