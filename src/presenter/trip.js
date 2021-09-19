@@ -162,7 +162,7 @@ export default class Trip {
   }
 
   _clearTrip({resetSortType = false, resetTripInfo = false} = {}) {
-    this._pointPresenters.forEach((presenter) => presenter.resetView());
+    this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.clear();
 
     if(this._emptyTripComponent) {

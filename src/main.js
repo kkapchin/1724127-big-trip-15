@@ -4,7 +4,7 @@ import TripModel from './model/trip.js';
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
 
-const TEMPORARY_POINTS_QUANTITY = 12;
+const TEMPORARY_POINTS_QUANTITY = 2;
 
 const bodyElement = document.querySelector('.page-body');
 const filterContainer = bodyElement.querySelector('.trip-controls__filters');
