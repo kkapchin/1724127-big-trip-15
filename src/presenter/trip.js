@@ -1,5 +1,5 @@
 import { remove, render, RenderPosition } from '../utils/render.js';
-import { isEmptyEventsList, SortBy } from '../utils/points.js';
+import { isEmptyEventsList } from '../utils/points.js';
 import { FilterType, SortType, UpdateType, UserAction } from '../const.js';
 import AppMenuView from '../view/app-menu.js';
 import AppFiltersView from '../view/app-filters.js';
@@ -11,8 +11,6 @@ import TotalCostView from '../view/total-cost-info.js';
 import PointPresenter from './point.js';
 import TripEventsView from '../view/trip-events.js';
 import NewEventBtnView from '../view/new-event.js';
-
-const DEFAULT_TOTAL_COST = 0;
 
 export default class Trip {
   constructor(bodyContainer, tripModel) {
@@ -26,8 +24,8 @@ export default class Trip {
     this._routeInfo = null;
 
     this._appMenuComponent = new AppMenuView();
-    //this._appSortComponent = null;
-    this._emptyTripComponent = new EmptyTripView();
+    this._appSortComponent = null;
+    this._emptyTripComponent = null;
     this._tripInfoComponent = new TripInfoView();
     this._eventsComponent = new TripEventsView();
     this._newEventBtnComponent = new NewEventBtnView();
@@ -47,13 +45,7 @@ export default class Trip {
   }
 
   _getPoints() {
-    switch(this._currentSortType) {
-      case SortType.TIME:
-        return this._tripModel.getPoints().slice().sort(SortBy.DURATION);
-      case SortType.PRICE:
-        return this._tripModel.getPoints().slice().sort(SortBy.PRICE);
-    }
-    return this._tripModel.getPoints();
+    return this._tripModel.getPoints(this._currentSortType, this._currentFilterType);
   }
 
   _getRouteInfo() {
@@ -73,27 +65,29 @@ export default class Trip {
   }
 
   _renderAppSort() {
-    /* if(this._appSortComponent) {
+    if(this._appSortComponent) {
       this._appSortComponent = null;
-    } */
+    }
     this._appSortComponent = new AppSortView(this._currentSortType);
     this._appSortComponent.setSortClickHandler(this._handleSortClick);
     render(this._eventsContainer, this._appSortComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderEmptyTrip() {
-    //this._emptyTripComponent.setEmpty
-    render(this._eventsContainer, this._emptyTripComponent/* .getElement(DEFAULT_FILTER) */, RenderPosition.BEFOREEND);
+    if(this._emptyTripComponent) {
+      this._emptyTripComponent = null;
+    }
+    this._emptyTripComponent = new EmptyTripView(this._currentFilterType);
+    render(this._eventsContainer, this._emptyTripComponent, RenderPosition.BEFOREEND);
   }
 
   _renderTripInfo() {
     if(this._routeInfo === null) {
       this._routeInfo = this._getRouteInfo();
     }
-    const totalCost = this._getPoints().reduce((total, tripEvent) => total + tripEvent.price, DEFAULT_TOTAL_COST);
     render(this._mainContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(this._tripInfoComponent, new RouteInfoView(this._routeInfo), RenderPosition.AFTERBEGIN);
-    render(this._tripInfoComponent, new TotalCostView(totalCost), RenderPosition.BEFOREEND);
+    render(this._tripInfoComponent, new TotalCostView(this._routeInfo.totalCost), RenderPosition.BEFOREEND);
   }
 
   _renderPoint(point) {
@@ -105,19 +99,19 @@ export default class Trip {
   _renderPoints() {
     render(this._eventsContainer, this._eventsComponent, RenderPosition.BEFOREEND);
     this._tripEventsListContainer = this._eventsContainer.querySelector('.trip-events__list');
-    this._getPoints().forEach((tripEvent) => this._renderPoint(tripEvent));
+    this._getPoints().forEach((point) => this._renderPoint(point));
   }
 
   _renderTrip() {
     this._renderAppMenu();
     this._renderAppFilters();
-    this._renderAppSort();
     this._renderNewEventBtn();
+    this._renderTripInfo();
     if(isEmptyEventsList(this._getPoints())) {
       this._renderEmptyTrip();
       return;
     }
-    this._renderTripInfo();
+    this._renderAppSort();
     this._renderPoints();
   }
 
@@ -179,9 +173,7 @@ export default class Trip {
 
   _handleFilterClick(filterType) {
     this._currentFilterType = filterType;
-    /* this._clearEventsList();
-    this._renderPoints(); */
-    this._clearTrip({resetSortType: true, resetTripInfo: true});
+    this._clearTrip({resetSortType: true, resetTripInfo: false});
     this._renderTrip();
   }
 
@@ -189,12 +181,19 @@ export default class Trip {
     this._pointPresenters.forEach((presenter) => presenter.resetView());
     this._pointPresenters.clear();
 
+    if(!(this._emptyTripComponent === null)) {
+      remove(this._emptyTripComponent);
+    }
+
     remove(this._eventsComponent);
     remove(this._appMenuComponent);
     remove(this._appFiltersComponent);
-    remove(this._appSortComponent);
     remove(this._newEventBtnComponent);
     remove(this._tripInfoComponent);
+
+    if(!(this._appSortComponent === null)) {
+      remove(this._appSortComponent);
+    }
 
     if(resetTripInfo) {
       this._routeInfo = this._getRouteInfo();

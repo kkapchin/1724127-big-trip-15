@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
+//import customParseFormatPlugin from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(durationPlugin);
-
+//dayjs.extend(customParseFormatPlugin);
 //const THREE = 3;
 
 export const calculateDuration = (start, end) => {
@@ -58,6 +59,8 @@ export const transformToPoints = (points) => points.map((point) => (
     description: point.destination.description, */
     isFavorite: point.isFavorite,
     id: point.id,
+    dateFrom: point.dateFrom,
+    dateTo: point.dateTo,
     //routeInfo: getRouteInfo(points),
   }
 ));
@@ -69,4 +72,8 @@ export const SortBy = {
   DEFAULT: (a, b) => a.dateFrom > b.dateFrom,
   DURATION: (a, b) => a.duration.total < b.duration.total,
   PRICE: (a, b) => a.price < b.price,
+  FILTER: {
+    FUTURE: (point) => dayjs(point.dateFrom) >= dayjs(),
+    PAST: (point) => dayjs(point.dateTo) < dayjs(),
+  },
 };
