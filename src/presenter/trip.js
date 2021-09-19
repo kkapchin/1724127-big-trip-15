@@ -2,7 +2,6 @@ import { remove, render, RenderPosition } from '../utils/render.js';
 import { isEmptyEventsList, SortBy } from '../utils/points.js';
 import { FilterType, SortType, UpdateType, UserAction } from '../const.js';
 import AppMenuView from '../view/app-menu.js';
-//import AppFiltersView from '../view/app-filters.js';
 import AppSortView from '../view/app-sort.js';
 import EmptyTripView from '../view/no-trip-events.js';
 import TripInfoView from '../view/trip-info.js';
@@ -37,7 +36,6 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortClick = this._handleSortClick.bind(this);
     this._handleNewEventBtnClick = this._handleNewEventBtnClick.bind(this);
-    //this._handleFilterClick = this._handleFilterClick.bind(this);
 
     this._tripModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -60,14 +58,6 @@ export default class Trip {
     }
 
     return filteredPoints;
-    /* switch(this._currentFilterType) {
-      case FilterType.ALL:
-        return this._points.slice().sort(SortBy.DEFAULT);
-      case FilterType.FUTURE:
-        return this._points.filter(SortBy.FILTER.FUTURE);
-      case FilterType.PAST:
-        return this._points.filter(SortBy.FILTER.PAST);
-    } */
   }
 
   _getRouteInfo() {
@@ -79,18 +69,6 @@ export default class Trip {
     render(this._appMenuContainer, this._appMenuComponent, RenderPosition.BEFOREEND);
   }
 
-  /* _renderAppFilters() {
-    this._appFiltersContainer = this._mainContainer.querySelector('.trip-controls__filters');
-
-    const enabledFilters = {
-      FUTURE: this._getPoints().filter(SortBy.FILTER.FUTURE).length > 0,
-      PAST: this._getPoints().filter(SortBy.FILTER.PAST).length > 0,
-    };
-    this._appFiltersComponent = new AppFiltersView(this._filterModel.getFilter());
-    this._appFiltersComponent.setFiltersClickHandler(this._handleFilterClick);
-    render(this._appFiltersContainer, this._appFiltersComponent, RenderPosition.BEFOREEND);
-  } */
-
   _renderAppSort() {
     if(this._appSortComponent) {
       this._appSortComponent = null;
@@ -101,9 +79,6 @@ export default class Trip {
   }
 
   _renderEmptyTrip() {
-    /* if(this._emptyTripComponent) {
-      this._emptyTripComponent = null;
-    } */
     this._emptyTripComponent = new EmptyTripView(this._currentFilterType);
     render(this._eventsContainer, this._emptyTripComponent, RenderPosition.BEFOREEND);
   }
@@ -133,7 +108,6 @@ export default class Trip {
 
   _renderTrip() {
     this._renderAppMenu();
-    //this._renderAppFilters();
     this._renderNewEventBtn();
     this._renderTripInfo();
     if(isEmptyEventsList(this._getPoints())) {
@@ -151,15 +125,7 @@ export default class Trip {
 
   _handleNewEventBtnClick(event) {
     event.target.disabled = !event.target.disabled;
-    //remove(this._eventsComponent);
-    //remove(this._emptyTripComponent);
   }
-
-  /* _clearEventsList() {
-    this._pointPresenters.forEach((presenter) => presenter.resetView());
-    this._pointPresenters.clear();
-    remove(this._eventsComponent);
-  } */
 
   _handleViewAction(actionType, updateType, update) {
     switch(actionType) {
@@ -181,7 +147,6 @@ export default class Trip {
         this._pointPresenters.get(data.id).render(data);
         break;
       case UpdateType.MAJOR:
-        //this._clearEventsList();
         this._clearTrip({resetSortType: false, resetTripInfo: true});
         this._renderTrip();
         break;
@@ -198,7 +163,6 @@ export default class Trip {
 
   _clearTrip({resetSortType = false, resetTripInfo = false} = {}) {
     this._pointPresenters.forEach((presenter) => presenter.resetView());
-    //this._pointPresenters.forEach((presenter) => presenter.removeElement());
     this._pointPresenters.clear();
 
     if(this._emptyTripComponent) {
@@ -207,7 +171,6 @@ export default class Trip {
 
     remove(this._eventsComponent);
     remove(this._appMenuComponent);
-    //remove(this._appFiltersComponent);
     remove(this._newEventBtnComponent);
     remove(this._tripInfoComponent);
 
