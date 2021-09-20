@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 
-const renderOffers = (offers) => {
+const createOffersTemplate = (offers) => {
   if(!offers) {
     return '';
   }
@@ -17,7 +17,7 @@ const renderOffers = (offers) => {
           </ul>`;
 };
 
-const createRoutePointsTemplate = (point) => (
+const createPointTemplate = (point) => (
   `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="${point.dateClass}">${point.eventDay}</time>
@@ -37,7 +37,7 @@ const createRoutePointsTemplate = (point) => (
         &euro;&nbsp;<span class="event__price-value">${point.price}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
-      ${renderOffers(point.offers)}
+      ${createOffersTemplate(point.offers)}
       <button class="event__favorite-btn ${point.isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -59,7 +59,7 @@ export default class RoutePoint extends AbstractView {
   }
 
   getTemplate() {
-    return createRoutePointsTemplate(this._point);
+    return createPointTemplate(this._point);
   }
 
   setRollupClickHandler(callback) {

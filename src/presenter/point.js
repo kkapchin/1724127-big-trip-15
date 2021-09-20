@@ -1,5 +1,5 @@
-import pointView from '../view/route-point.js';
-import pointFormView from '../view/route-point-form.js';
+import pointView from '../view/point.js';
+import pointFormView from '../view/point-form.js';
 import { remove, render, RenderPosition, replace } from '../utils/render.js';
 import { isEscEvent } from '../utils/keyboard-events.js';
 import { UpdateType, UserAction } from '../const.js';
@@ -124,7 +124,7 @@ export default class Point {
   _handleDeletePointClick() {
     this._updateView(
       UserAction.DELETE_POINT,
-      UpdateType.MAJOR,
+      UpdateType.SORT,
       this._point,
     );
   }

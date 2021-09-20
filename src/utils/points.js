@@ -54,14 +54,10 @@ export const transformToPoints = (points) => points.map((point) => (
     type: point.type,
     offers: point.offers,
     destination: point.destination,
-    /* city: point.destination.name,
-    pictures: point.destination.pictures,
-    description: point.destination.description, */
     isFavorite: point.isFavorite,
     id: point.id,
     dateFrom: point.dateFrom,
     dateTo: point.dateTo,
-    //routeInfo: getRouteInfo(points),
   }
 ));
 
@@ -72,8 +68,4 @@ export const SortBy = {
   DEFAULT: (a, b) => a.dateFrom > b.dateFrom,
   DURATION: (a, b) => a.duration.total < b.duration.total,
   PRICE: (a, b) => a.price < b.price,
-  /* FILTER: {
-    FUTURE: (point) => dayjs(point.dateFrom) >= dayjs(),
-    PAST: (point) => dayjs(point.dateTo) < dayjs(),
-  }, */
 };

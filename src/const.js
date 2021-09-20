@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const SortType = {
   DAY: 'Day',
   EVENT: 'Event',
@@ -36,9 +38,10 @@ export const UserAction = {
 };
 
 export const UpdateType = {
+  NONE: 'NONE',
   PATCH: 'PATCH',
   FILTER: 'FILTER',
-  MAJOR: 'MAJOR',
+  SORT: 'SORT',
   FULL: 'FULL',
 };
 
@@ -57,4 +60,47 @@ export const FilterMessage = {
 export const Disabled = {
   TRUE: 'disabled',
   FALSE: '',
+};
+
+export const Autocomplete = {
+  ON: 'autocomplete="on"',
+  OFF: 'autocomplete="off"',
+};
+
+export const BLANK_POINT = {
+  price: '',
+  dispatchDate: dayjs().format('DD/MM/YY HH:mm'),
+  dispatchTime: dayjs().format('HH:mm'),
+  arrivalDate: dayjs().format('DD/MM/YY HH:mm'),
+  arrivalTime: dayjs().format('HH:mm'),
+  eventDay: dayjs().format('MMM DD'),
+  dateClass: dayjs().format('YYYY-MM-DD'),
+  dispatchTimeClass: dayjs().format('YYYY-MM-DDTHH:mm'),
+  arrivalTimeClass: dayjs().format('YYYY-MM-DDTHH:mm'),
+  /* dispatchDate: '',
+  dispatchTime: '',
+  arrivalDate: '',
+  arrivalTime: '',
+  eventDay: '',
+  dateClass: '',
+  dispatchTimeClass: '',
+  arrivalTimeClass: '', */
+  duration: '',
+  type: 'flight',
+  offers: undefined,
+  destination: {
+    description: '',
+    name: '',
+    pictures: undefined,
+  },
+  isFavorite: false,
+  id: '',
+  dateFrom: '',
+  dateTo: '',
+};
+
+export const MenuItem = {
+  ADD_NEW_POINT: 'ADD_NEW_POINT',
+  TABLE: 'TABLE',
+  STATS: 'STATS',
 };

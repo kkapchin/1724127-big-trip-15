@@ -3,19 +3,30 @@ import FilterModel from './model/filter.js';
 import TripModel from './model/trip.js';
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
+import MenuPresenter from './presenter/menu.js';
+import SortModel from './model/sort.js';
+//import { MenuItem } from './const.js';
+//import AppMenuView from './view/app-menu.js';
+//import { render, RenderPosition } from './utils/render.js';
 
 const TEMPORARY_POINTS_QUANTITY = 2;
 
-const bodyElement = document.querySelector('.page-body');
-const filterContainer = bodyElement.querySelector('.trip-controls__filters');
+const bodyContainer = document.querySelector('.page-body');
+const filterContainer = bodyContainer.querySelector('.trip-controls__filters');
 const points = getPoints(TEMPORARY_POINTS_QUANTITY);
+//const appMenuComponent = new AppMenuView();
+
+//render(appMenuContainer, appMenuComponent, RenderPosition.BEFOREEND);
 
 const tripModel = new TripModel();
-tripModel.setPoints(points);
-
 const filterModel = new FilterModel();
-const tripPresenter = new TripPresenter(bodyElement, tripModel, filterModel);
+const sortModel = new SortModel();
+
+const menuPresenter = new MenuPresenter(bodyContainer, tripModel, filterModel);
+const tripPresenter = new TripPresenter(bodyContainer, tripModel, filterModel, sortModel);
 const filterPresenter = new FilterPresenter(filterContainer, tripModel, filterModel);
 
+tripModel.setPoints(points);
+menuPresenter.render();
 tripPresenter.render();
 filterPresenter.render();

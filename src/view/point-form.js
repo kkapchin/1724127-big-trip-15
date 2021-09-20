@@ -1,4 +1,4 @@
-import { Checkbox, Order } from '../const.js';
+import { Autocomplete, BLANK_POINT, Checkbox, Order } from '../const.js';
 import { generateDestinations, updateOffers } from '../mock/mocks.js';
 import { isEnterEvent, isEscEvent } from '../utils/keyboard-events.js';
 import SmartView from './smart.js';
@@ -19,11 +19,13 @@ const EVENT_TYPES = [
   'Restaurant',
 ];
 
-const Attribute = {
+const reg = /^\d{1,7}$/;
+
+/* const Attribute = {
   READONLY: 'readonly',
   AUTOCOMPLETE: 'autocomplete',
   PLACEHOLDER: 'placeholder',
-};
+}; */
 
 const destinations = generateDestinations()
   .sort((a, b) => a.name > b.name);
@@ -78,7 +80,7 @@ const createEventTypesTemplate = (actualType) => {
   return eventTypesElements.join('');
 };
 
-const createNewPoint = (data) => {
+const createPointFormTemplate = (data) => {
   const {type, destination, dispatchDate, arrivalDate, price, offers, isOffers, isPictures} = data;
   const offersTemplate = isOffers ? createOffersTemplate(offers) : '';
   const picturesTemplate = isPictures ? createPicturesTemplate(destination.pictures) : '';
@@ -107,7 +109,7 @@ const createNewPoint = (data) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" ${Autocomplete.OFF}>
           <datalist id="destination-list-1">
             ${optionsTemplate}
           </datalist>
@@ -147,10 +149,10 @@ const createNewPoint = (data) => {
   </li>`;
 };
 
-export default class RoutePointForm extends SmartView {
-  constructor(point) {
+export default class PointForm extends SmartView {
+  constructor(point = BLANK_POINT) {
     super();
-    this._data = RoutePointForm.parsePointToData(point);
+    this._data = PointForm.parsePointToData(point);
     this._datepickrDispatch = null;
     this._datepickrArrival = null;
 
@@ -163,18 +165,19 @@ export default class RoutePointForm extends SmartView {
     this._dispatchDateChangeHandler = this._dispatchDateChangeHandler.bind(this);
     this._arrivalDateChangeHandler = this._arrivalDateChangeHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._priceInputKeydownHandler = this._priceInputKeydownHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepickrDispatch();
   }
 
   getTemplate() {
-    return createNewPoint(this._data);
+    return createPointFormTemplate(this._data);
   }
 
   reset(point) {
     this.updateData(
-      RoutePointForm.parsePointToData(point),
+      PointForm.parsePointToData(point),
     );
   }
 
@@ -247,6 +250,9 @@ export default class RoutePointForm extends SmartView {
     this.getElement()
       .querySelector('.event__reset-btn')
       .addEventListener('click', this._formDeleteClickHandler);
+    this.getElement()
+      .querySelector('.event__input--price')
+      .addEventListener('keydown', this._priceInputKeydownHandler);
   }
 
   _saveClickHandler(event) {
@@ -270,13 +276,17 @@ export default class RoutePointForm extends SmartView {
   }
 
   _destinationInputHandler(event) {
-    event.target.setAttribute(Attribute.AUTOCOMPLETE, 'off');
-
     if(destinationCities.includes(event.target.value)) {
       this.updateData({
         city: event.target.value,
         destination: destinations.filter((destination) => destination.name === event.target.value)[0],
       });
+    }
+  }
+
+  _priceInputKeydownHandler(event) {
+    if(!reg.test(event.key)) {
+      event.preventDefault();
     }
   }
 
