@@ -14,15 +14,12 @@ const TEMPORARY_POINTS_QUANTITY = 2;
 const bodyContainer = document.querySelector('.page-body');
 const filterContainer = bodyContainer.querySelector('.trip-controls__filters');
 const points = getPoints(TEMPORARY_POINTS_QUANTITY);
-//const appMenuComponent = new AppMenuView();
-
-//render(appMenuContainer, appMenuComponent, RenderPosition.BEFOREEND);
 
 const tripModel = new TripModel();
 const filterModel = new FilterModel();
 const sortModel = new SortModel();
 
-const menuPresenter = new MenuPresenter(bodyContainer, tripModel, filterModel);
+const menuPresenter = new MenuPresenter(bodyContainer, tripModel, filterModel, sortModel);
 const tripPresenter = new TripPresenter(bodyContainer, tripModel, filterModel, sortModel);
 const filterPresenter = new FilterPresenter(filterContainer, tripModel, filterModel);
 

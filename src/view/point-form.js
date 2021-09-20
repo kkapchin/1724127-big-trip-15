@@ -5,6 +5,7 @@ import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import dayjs from 'dayjs';
 
 const EVENT_TYPES = [
   'Taxi',
@@ -260,7 +261,7 @@ export default class PointForm extends SmartView {
       event.preventDefault();
     }
     event.preventDefault();
-    this._callback.saveClick();
+    this._callback.saveClick(PointForm.parseDataToPoint(this._data));
   }
 
   _eventTypeClickHandler(event) {
@@ -303,16 +304,17 @@ export default class PointForm extends SmartView {
     }
   }
 
-  _dispatchDateChangeHandler(userDispatchDate) {
+  _dispatchDateChangeHandler([userDispatchDate]) {
     this.updateData({
       dispatchDate: userDispatchDate,
-    }, true);
+      eventDay: dayjs(userDispatchDate).format('MMM DD'),
+    });
   }
 
-  _arrivalDateChangeHandler(userDispatchDate) {
+  _arrivalDateChangeHandler([userDispatchDate]) {
     this.updateData({
       arrivalDate: userDispatchDate,
-    }, true);
+    });
   }
 
   _setDatepickrDispatch() {

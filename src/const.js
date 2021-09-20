@@ -40,6 +40,7 @@ export const UserAction = {
 export const UpdateType = {
   NONE: 'NONE',
   PATCH: 'PATCH',
+  SAVE: 'SAVE',
   FILTER: 'FILTER',
   SORT: 'SORT',
   FULL: 'FULL',

@@ -1,15 +1,18 @@
 import { FilterType, MenuItem, SortType, UpdateType } from '../const';
 import { render, RenderPosition } from '../utils/render';
 import AppMenuView from '../view/menu.js';
-import NewPointBtnView from '../view/new-point';
+import NewPointBtnView from '../view/new-point.js';
+import NewPointPresenter from './new-point.js';
 
 export default class Menu {
-  constructor(bodyContainer, tripModel, filterModel) {
+  constructor(bodyContainer, tripModel, filterModel, sortModel) {
     this._bodyContainer = bodyContainer;
     this._tripModel = tripModel;
     this._filterModel = filterModel;
+    this._sortModel = sortModel;
     this._menuComponent = null;
     this._newPointBtnComponent = null;
+    this._eventsContainer = this._bodyContainer.querySelector('.trip-events');
 
     this._handleSiteMenuClick = this._handleSiteMenuClick.bind(this);
     this._handleNewPointBtnClick = this._handleNewPointBtnClick.bind(this);
@@ -28,35 +31,27 @@ export default class Menu {
     render(this._newPointBtnContainer, this._newPointBtnComponent, RenderPosition.BEFOREEND);
   }
 
-  createPoint() {
-    this._currentSortType = SortType.DAY;
-    this._filterModel.setFilter(UpdateType.FILTER, FilterType.ALL);
-    this._newPointPresenter.render();
-  }
-
   _handleSiteMenuClick(menuItem) {
     switch (menuItem) {
       case MenuItem.ADD_NEW_POINT:
-        // Скрыть статистику
-        // Показать доску
-        // Показать форму добавления новой задачи
-        // Убрать выделение с ADD NEW TASK после сохранения
+        // Hide Stats
+        // Show Table
+        // Open blank form
+        // Disable New Event button
         break;
       case MenuItem.TABLE:
-        // Показать доску
-        // Скрыть статистику
+        // Show Table
+        // Hide Stats
         break;
       case MenuItem.STATS:
-        // Скрыть доску
-        // Показать статистику
+        // Hide Table
+        // Show Stats
         break;
     }
   }
 
   _handleNewPointBtnClick(event) {
     event.target.disabled = !event.target.disabled;
-    /* this._pointPresenters.forEach((presenter) => presenter.resetView());
-    this._newPointPresenter.render(); */
-    //this._tripModel.
+    this._trip.createPoint();
   }
 }

@@ -102,9 +102,14 @@ export default class Point {
     this._replaceFormToDefault();
   }
 
-  _handleSaveClick() {
-    this._replaceFormToDefault();
+  _handleSaveClick(update) {
+    this._updateView(
+      UserAction.UPDATE_POINT,
+      UpdateType.SAVE,
+      update,
+    );
     document.removeEventListener('keydown', this._documentKeydownHandler);
+    this._replaceFormToDefault();
   }
 
   _handleFavoriteClick() {
