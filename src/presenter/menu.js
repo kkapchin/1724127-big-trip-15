@@ -1,12 +1,15 @@
-import { FilterType, MenuItem, SortType, UpdateType } from '../const';
-import { render, RenderPosition } from '../utils/render';
-import AppMenuView from '../view/menu.js';
+import { MenuItem } from '../const';
+import { remove, render, RenderPosition, replace } from '../utils/render';
+import MenuView from '../view/menu.js';
 import NewPointBtnView from '../view/new-point.js';
-import NewPointPresenter from './new-point.js';
+//import NewPointPresenter from './new-point.js';
 
 export default class Menu {
   constructor(bodyContainer, tripModel, filterModel, sortModel) {
     this._bodyContainer = bodyContainer;
+    this._menuContainer = this._bodyContainer.querySelector('.trip-controls__navigation');
+    this._newPointBtnContainer = this._bodyContainer.querySelector('.trip-main');
+
     this._tripModel = tripModel;
     this._filterModel = filterModel;
     this._sortModel = sortModel;
@@ -19,16 +22,36 @@ export default class Menu {
   }
 
   render() {
-    this._menuContainer = this._bodyContainer.querySelector('.trip-controls__navigation');
-    this._newPointBtnContainer = this._bodyContainer.querySelector('.trip-main');
+    this._renderMenu();
+    this._renderNewPointBtn();
+  }
 
-    this._menuComponent = new AppMenuView();
-    this._newPointBtnComponent = new NewPointBtnView();
+  _renderMenu() {
+    const prevMenuComponent = this._menuComponent;
 
+    this._menuComponent = new MenuView();
     this._menuComponent.setMenuClickHandler(this._handleSiteMenuClick);
+
+    if(prevMenuComponent === null) {
+      render(this._menuContainer, this._menuComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+    replace(this._menuComponent, prevMenuComponent);
+    remove(prevMenuComponent);
+  }
+
+  _renderNewPointBtn() {
+    const prevNewPointBtnComponent = this._newPointBtnComponent;
+
+    this._newPointBtnComponent = new NewPointBtnView();
     this._newPointBtnComponent.setNewPointBtnClickHandler(this._handleNewPointBtnClick);
-    render(this._menuContainer, this._menuComponent, RenderPosition.BEFOREEND);
-    render(this._newPointBtnContainer, this._newPointBtnComponent, RenderPosition.BEFOREEND);
+
+    if(prevNewPointBtnComponent === null) {
+      render(this._newPointBtnContainer, this._newPointBtnComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+    replace(this._newPointBtnComponent, prevNewPointBtnComponent);
+    remove(prevNewPointBtnComponent);
   }
 
   _handleSiteMenuClick(menuItem) {

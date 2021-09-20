@@ -165,7 +165,7 @@ export default class PointForm extends SmartView {
     this._destinationKeydownHandler = this._destinationKeydownHandler.bind(this);
     this._dispatchDateChangeHandler = this._dispatchDateChangeHandler.bind(this);
     this._arrivalDateChangeHandler = this._arrivalDateChangeHandler.bind(this);
-    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._priceInputKeydownHandler = this._priceInputKeydownHandler.bind(this);
 
     this._setInnerHandlers();
@@ -207,7 +207,7 @@ export default class PointForm extends SmartView {
     this._callback.deleteClick = callback;
     this.getElement()
       .querySelector('.event__reset-btn')
-      .addEventListener('click', this._formDeleteClickHandler);
+      .addEventListener('click', this._deleteClickHandler);
   }
 
   removeElement() {
@@ -250,7 +250,7 @@ export default class PointForm extends SmartView {
       .addEventListener('keydown', this._destinationKeydownHandler);
     this.getElement()
       .querySelector('.event__reset-btn')
-      .addEventListener('click', this._formDeleteClickHandler);
+      .addEventListener('click', this._deleteClickHandler);
     this.getElement()
       .querySelector('.event__input--price')
       .addEventListener('keydown', this._priceInputKeydownHandler);
@@ -262,6 +262,11 @@ export default class PointForm extends SmartView {
     }
     event.preventDefault();
     this._callback.saveClick(PointForm.parseDataToPoint(this._data));
+  }
+
+  _deleteClickHandler(event) {
+    event.preventDefault();
+    this._callback.deleteClick(PointForm.parseDataToPoint(this._data));
   }
 
   _eventTypeClickHandler(event) {
@@ -306,14 +311,19 @@ export default class PointForm extends SmartView {
 
   _dispatchDateChangeHandler([userDispatchDate]) {
     this.updateData({
-      dispatchDate: userDispatchDate,
+      dateFrom: dayjs(userDispatchDate).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      dispatchDate: dayjs(userDispatchDate).format('DD/MM/YY HH:mm'),
+      dispatchTime: dayjs(userDispatchDate).format('HH:mm'),
       eventDay: dayjs(userDispatchDate).format('MMM DD'),
+      dateClass: dayjs(userDispatchDate).format('YYYY-MM-DD'),
     });
   }
 
-  _arrivalDateChangeHandler([userDispatchDate]) {
+  _arrivalDateChangeHandler([userArrivalDate]) {
     this.updateData({
-      arrivalDate: userDispatchDate,
+      dateTo: dayjs(userArrivalDate).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      arrivalDate: dayjs(userArrivalDate).format('DD/MM/YY HH:mm'),
+      arrivalTime: dayjs(userArrivalDate).format('HH:mm'),
     });
   }
 
@@ -336,7 +346,7 @@ export default class PointForm extends SmartView {
         dateFormat: 'd/m/y H:i',
         maxDate: this._data.arrivalDate,
         defaultDate: this._data.dispatchDate,
-        onChange: this._dispatchDateChangeHandler,
+        onClose: this._dispatchDateChangeHandler,
       },
     );
 
@@ -347,14 +357,9 @@ export default class PointForm extends SmartView {
         dateFormat: 'd/m/y H:i',
         minDate: this._data.dispatchDate,
         defaultDate: this._data.arrivalDate,
-        onChange: this._arrivalDateChangeHandler,
+        onClose: this._arrivalDateChangeHandler,
       },
     );
-  }
-
-  _formDeleteClickHandler(event) {
-    event.preventDefault();
-    this._callback.deleteClick(/* RoutePointForm.parseDataToPoint(this._data) */);
   }
 
   static parsePointToData(point) {

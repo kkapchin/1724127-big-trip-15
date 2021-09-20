@@ -1,8 +1,7 @@
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { isEmptyEventsList, SortBy } from '../utils/points.js';
 import { FilterType, SortType, UpdateType, UserAction } from '../const.js';
-//import AppMenuView from '../view/app-menu.js';
-import AppSortView from '../view/sort.js';
+import SortView from '../view/sort.js';
 import EmptyTripView from '../view/no-trip-events.js';
 import TripInfoView from '../view/trip-info.js';
 import RouteInfoView from '../view/route-info.js';
@@ -13,13 +12,23 @@ import { filter } from '../utils/filter.js';
 import PointPresenter from './point.js';
 import NewPointPresenter from './new-point.js';
 import MenuPresenter from './menu.js';
+import FilterModel from '../model/filter.js';
+import FilterPresenter from './filter.js';
+import SortModel from '../model/sort.js';
 
 export default class Trip {
-  constructor(bodyContainer, tripModel, filterModel, sortModel) {
+  constructor(bodyContainer, tripModel) {
     this._bodyContainer = bodyContainer;
+    this._filterContainer = this._bodyContainer.querySelector('.trip-controls__filters');
+
     this._tripModel = tripModel;
-    this._filterModel = filterModel;
-    this._sortModel = sortModel;
+    this._filterModel = new FilterModel();
+    this._sortModel = new SortModel();
+
+    this._menuPresenter = new MenuPresenter(this._bodyContainer, this._tripModel, this._filterModel);
+    this._filterPresenter = new FilterPresenter(this._filterContainer, this._tripModel, this._filterModel);
+    //this._sortPresenter
+
     this._currentSortType = SortType.DAY;
     this._currentFilterType = FilterType.ALL;
     this._routeInfo = null;
@@ -43,7 +52,7 @@ export default class Trip {
     this._sortModel.addObserver(this._handleModelEvent);
 
     this._newPointPresenter = new NewPointPresenter(this._eventsComponent, this._handleViewAction);
-    this._menuPresenter = new MenuPresenter(this._bodyContainer)
+    this._menuPresenter = new MenuPresenter(this._bodyContainer);
   }
 
   render() {
@@ -78,16 +87,19 @@ export default class Trip {
     return this._tripModel.getRouteInfo();
   }
 
-  /* _renderAppMenu() {
-    this._appMenuContainer = this._mainContainer.querySelector('.trip-controls__navigation');
-    render(this._appMenuContainer, this._appMenuComponent, RenderPosition.BEFOREEND);
-  } */
+  _renderMenu() {
+    this._menuPresenter.render();
+  }
 
-  _renderAppSort() {
+  _renderFilter() {
+    this._filterPresenter.render();
+  }
+
+  _renderSort() {
     if(this._appSortComponent) {
       this._appSortComponent = null;
     }
-    this._appSortComponent = new AppSortView(this._currentSortType);
+    this._appSortComponent = new SortView(this._currentSortType);
     this._appSortComponent.setSortClickHandler(this._handleSortClick);
     render(this._eventsContainer, this._appSortComponent, RenderPosition.AFTERBEGIN);
   }
@@ -121,14 +133,14 @@ export default class Trip {
   }
 
   _renderTrip() {
-    //this._renderAppMenu();
-    //this._renderNewPointBtn();
+    this._renderMenu();
+    this._renderFilter();
     this._renderTripInfo();
     if(isEmptyEventsList(this._getPoints())) {
       this._renderEmptyTrip();
       return;
     }
-    this._renderAppSort();
+    this._renderSort();
     this._renderPoints();
   }
 

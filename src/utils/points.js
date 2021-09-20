@@ -46,7 +46,7 @@ export const transformToPoints = (points) => points.map((point) => (
     dispatchTime: dayjs(point.dateFrom).format('HH:mm'),
     arrivalDate: dayjs(point.dateTo).format('DD/MM/YY HH:mm'),
     arrivalTime: dayjs(point.dateTo).format('HH:mm'),
-    eventDay: dayjs(point.dateTo).format('MMM DD'),
+    eventDay: dayjs(point.dateFrom).format('MMM DD'),
     dateClass: dayjs(point.dateFrom).format('YYYY-MM-DD'),
     dispatchTimeClass: dayjs(point.dateFrom).format('YYYY-MM-DDTHH:mm'),
     arrivalTimeClass: dayjs(point.dateTo).format('YYYY-MM-DDTHH:mm'),

@@ -64,7 +64,7 @@ const generateTime = () => {
     minutes: getRandomInteger(0, 59),
   };
 
-  const dispatchDate =  dayjs('2021-09-18').add(duration.minutes, 'minutes').add(duration.hours, 'hours').add(duration.days, 'days');
+  const dispatchDate =  dayjs('2021-09-19').add(duration.minutes, 'minutes').add(duration.hours, 'hours').add(duration.days, 'days');
   const arrivalDate = dispatchDate.add(duration.minutes, 'minutes').add(duration.hours, 'hours').add(duration.days, 'days');
   const difference = arrivalDate.diff(dispatchDate, 'minutes');
   const setDurationFormat = () => {

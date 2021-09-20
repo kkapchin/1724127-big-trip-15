@@ -24,7 +24,7 @@ export default class Point {
     this._handleFormRollupClick = this._handleFormRollupClick.bind(this);
     this._handleSaveClick = this._handleSaveClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleDeletePointClick = this._handleDeletePointClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   render(point) {
@@ -40,7 +40,7 @@ export default class Point {
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointFormComponent.setRollupClickHandler(this._handleFormRollupClick);
     this._pointFormComponent.setSaveClickHandler(this._handleSaveClick);
-    this._pointFormComponent.setDeleteClickHandler(this._handleDeletePointClick);
+    this._pointFormComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if(prevPointComponent === null || prevPointFormComponent === null) {
       render(this._eventListContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -109,7 +109,16 @@ export default class Point {
       update,
     );
     document.removeEventListener('keydown', this._documentKeydownHandler);
-    this._replaceFormToDefault();
+    //this._replaceFormToDefault();
+  }
+
+  _handleDeleteClick(update) {
+    this._updateView(
+      UserAction.DELETE_POINT,
+      UpdateType.SORT,
+      update,
+    );
+    document.removeEventListener('keydown', this._documentKeydownHandler);
   }
 
   _handleFavoriteClick() {
@@ -123,14 +132,6 @@ export default class Point {
           isFavorite: !this._point.isFavorite,
         },
       ),
-    );
-  }
-
-  _handleDeletePointClick() {
-    this._updateView(
-      UserAction.DELETE_POINT,
-      UpdateType.SORT,
-      this._point,
     );
   }
 }

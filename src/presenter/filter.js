@@ -1,6 +1,6 @@
 import { UpdateType, FilterType } from '../const.js';
-import { filter } from '../utils/filter';
-import { remove, render, RenderPosition, replace } from '../utils/render';
+import { filter } from '../utils/filter.js';
+import { remove, render, RenderPosition, replace } from '../utils/render.js';
 import FilterView from '../view/filter.js';
 
 export default class Filter {
@@ -9,7 +9,7 @@ export default class Filter {
     this._tripModel = tripModel;
     this._filterModel = filterModel;
 
-    this._filtersComponent = null;
+    this._filterComponent = null;
 
     this._handleFilterClick = this._handleFilterClick.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -20,18 +20,18 @@ export default class Filter {
 
   render() {
     const filters = this._getFilters();
-    const prevFiltersComponent = this._filtersComponent;
+    const prevFilterComponent = this._filterComponent;
 
-    this._filtersComponent = new FilterView(filters, this._filterModel.getFilter());
-    this._filtersComponent.setFiltersClickHandler(this._handleFilterClick);
+    this._filterComponent = new FilterView(filters, this._filterModel.getFilter());
+    this._filterComponent.setFiltersClickHandler(this._handleFilterClick);
 
-    if (prevFiltersComponent === null) {
-      render(this._filterContainer, this._filtersComponent, RenderPosition.BEFOREEND);
+    if (prevFilterComponent === null) {
+      render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    replace(this._filtersComponent, prevFiltersComponent);
-    remove(prevFiltersComponent);
+    replace(this._filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
   }
 
   _getFilters() {
