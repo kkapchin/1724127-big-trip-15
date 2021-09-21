@@ -77,6 +77,8 @@ export default class Menu {
   }
 
   setButtonStateEnabled() {
-    this._handleSiteMenuClick(MenuState.DEFAULT);
+    if(this._newPointBtnState === Disabled.TRUE) {
+      this._handleSiteMenuClick(MenuState.DEFAULT);
+    }
   }
 }

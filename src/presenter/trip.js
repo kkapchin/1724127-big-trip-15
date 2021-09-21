@@ -189,7 +189,6 @@ export default class Trip {
         this._renderTrip();
         break;
       case UpdateType.FULL:
-        this._menuPresenter.setButtonStateEnabled();
         this._clearTrip({resetSortType: true, resetTripInfo: true});
         this._renderTrip();
         break;
@@ -198,6 +197,7 @@ export default class Trip {
 
   _clearTrip({resetSortType = false, resetTripInfo = false} = {}) {
     //this._newPointPresenter.destroy();
+    this._menuPresenter.setButtonStateEnabled();
     this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.clear();
 
@@ -222,7 +222,10 @@ export default class Trip {
   }
 
   _handleModeChange() {
-    this._newPointPresenter.destroy();
+    if(this._newPointPresenter) {
+      this._newPointPresenter.destroy();
+    }
+    this._menuPresenter.setButtonStateEnabled();
     this._pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
