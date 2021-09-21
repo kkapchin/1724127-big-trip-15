@@ -1,24 +1,22 @@
-import { MenuItem } from '../const';
+import { Disabled, MenuState, UpdateType } from '../const';
 import { remove, render, RenderPosition, replace } from '../utils/render';
 import MenuView from '../view/menu.js';
 import NewPointBtnView from '../view/new-point.js';
 //import NewPointPresenter from './new-point.js';
 
 export default class Menu {
-  constructor(bodyContainer, tripModel, filterModel, sortModel) {
+  constructor(bodyContainer, updateView) {
+    this._updateView = updateView;
     this._bodyContainer = bodyContainer;
     this._menuContainer = this._bodyContainer.querySelector('.trip-controls__navigation');
     this._newPointBtnContainer = this._bodyContainer.querySelector('.trip-main');
 
-    this._tripModel = tripModel;
-    this._filterModel = filterModel;
-    this._sortModel = sortModel;
     this._menuComponent = null;
     this._newPointBtnComponent = null;
+    this._newPointBtnState = Disabled.FALSE;
     this._eventsContainer = this._bodyContainer.querySelector('.trip-events');
 
     this._handleSiteMenuClick = this._handleSiteMenuClick.bind(this);
-    this._handleNewPointBtnClick = this._handleNewPointBtnClick.bind(this);
   }
 
   render() {
@@ -43,8 +41,8 @@ export default class Menu {
   _renderNewPointBtn() {
     const prevNewPointBtnComponent = this._newPointBtnComponent;
 
-    this._newPointBtnComponent = new NewPointBtnView();
-    this._newPointBtnComponent.setNewPointBtnClickHandler(this._handleNewPointBtnClick);
+    this._newPointBtnComponent = new NewPointBtnView(this._newPointBtnState);
+    this._newPointBtnComponent.setNewPointBtnClickHandler(this._handleSiteMenuClick);
 
     if(prevNewPointBtnComponent === null) {
       render(this._newPointBtnContainer, this._newPointBtnComponent, RenderPosition.BEFOREEND);
@@ -54,27 +52,31 @@ export default class Menu {
     remove(prevNewPointBtnComponent);
   }
 
-  _handleSiteMenuClick(menuItem) {
-    switch (menuItem) {
-      case MenuItem.ADD_NEW_POINT:
+  _handleSiteMenuClick(menuState) {
+    switch (menuState) {
+      case MenuState.DEFAULT:
+        this._newPointBtnState = Disabled.FALSE;
+        this._renderNewPointBtn();
+        break;
+      case MenuState.NEW_EVENT:
         // Hide Stats
         // Show Table
-        // Open blank form
-        // Disable New Event button
+        this._updateView(UpdateType.NEW_POINT);
+        this._newPointBtnState = Disabled.TRUE;
+        this._renderNewPointBtn();
         break;
-      case MenuItem.TABLE:
+      case MenuState.TABLE:
         // Show Table
         // Hide Stats
         break;
-      case MenuItem.STATS:
+      case MenuState.STATS:
         // Hide Table
         // Show Stats
         break;
     }
   }
 
-  _handleNewPointBtnClick(event) {
-    event.target.disabled = !event.target.disabled;
-    this._trip.createPoint();
+  setButtonStateEnabled() {
+    this._handleSiteMenuClick(MenuState.DEFAULT);
   }
 }

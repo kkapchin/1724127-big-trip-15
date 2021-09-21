@@ -22,12 +22,6 @@ const EVENT_TYPES = [
 
 const reg = /^\d{1,7}$/;
 
-/* const Attribute = {
-  READONLY: 'readonly',
-  AUTOCOMPLETE: 'autocomplete',
-  PLACEHOLDER: 'placeholder',
-}; */
-
 const destinations = generateDestinations()
   .sort((a, b) => a.name > b.name);
 

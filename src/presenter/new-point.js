@@ -5,8 +5,9 @@ import { remove, render, RenderPosition } from '../utils/render';
 import pointFormView from '../view/point-form.js';
 
 export default class NewPoint {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, updateView, changeData) {
     this._eventListContainer = eventListContainer;
+    this._updateView = updateView;
     this._changeData = changeData;
 
     this._pointFormComponent = null;
@@ -29,7 +30,6 @@ export default class NewPoint {
     this._pointFormComponent.setDeleteClickHandler(this._handleDeletePointClick);
 
     render(this._eventListContainer, this._pointFormComponent, RenderPosition.AFTERBEGIN);
-
     document.addEventListener('keydown', this._documentKeydownHandler);
   }
 
@@ -54,6 +54,7 @@ export default class NewPoint {
   }
 
   _handleFormRollupClick() {
+    this._updateView(UpdateType.FULL);
     this.destroy();
   }
 
@@ -65,6 +66,7 @@ export default class NewPoint {
     if(isEscEvent(event)) {
       event.preventDefault();
       this.destroy();
+      this._updateView(UpdateType.FULL);
     }
   }
 }

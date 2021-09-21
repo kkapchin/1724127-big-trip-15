@@ -1,12 +1,12 @@
-//import { ButtonState } from '../const.js';
+import { MenuState } from '../const.js';
 import Abstract from './abstract.js';
 
 const createNewPointBtn = (buttonState) => `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" ${buttonState}>New event</button>`;
 
 export default class NewPointBtn extends Abstract{
-  constructor() {
+  constructor(buttonState) {
     super();
-    //this._buttonState = ButtonState.ENABLED;
+    this._buttonState = buttonState;
 
     this._newPointBtnClickHandler = this._newPointBtnClickHandler.bind(this);
   }
@@ -17,8 +17,7 @@ export default class NewPointBtn extends Abstract{
 
   _newPointBtnClickHandler(event) {
     event.preventDefault();
-    //this._buttonState = ButtonState.DISABLED;
-    this._callback.newPointBtnClick(event);
+    this._callback.newPointBtnClick(MenuState.NEW_EVENT);
   }
 
   setNewPointBtnClickHandler(callback) {

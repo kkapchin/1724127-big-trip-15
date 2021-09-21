@@ -8,11 +8,6 @@ export const SortType = {
   OFFERS: 'Offers',
 };
 
-export const ButtonState = {
-  ENABLED: 'enabled',
-  DISABLED: 'disabled',
-};
-
 export const Checkbox = {
   TRUE: 'checked',
   FALSE: '',
@@ -42,6 +37,7 @@ export const UpdateType = {
   PATCH: 'PATCH',
   SAVE: 'SAVE',
   FILTER: 'FILTER',
+  NEW_POINT: 'NEW_POINT',
   SORT: 'SORT',
   FULL: 'FULL',
 };
@@ -78,14 +74,6 @@ export const BLANK_POINT = {
   dateClass: dayjs().format('YYYY-MM-DD'),
   dispatchTimeClass: dayjs().format('YYYY-MM-DDTHH:mm'),
   arrivalTimeClass: dayjs().format('YYYY-MM-DDTHH:mm'),
-  /* dispatchDate: '',
-  dispatchTime: '',
-  arrivalDate: '',
-  arrivalTime: '',
-  eventDay: '',
-  dateClass: '',
-  dispatchTimeClass: '',
-  arrivalTimeClass: '', */
   duration: '',
   type: 'flight',
   offers: undefined,
@@ -100,8 +88,9 @@ export const BLANK_POINT = {
   dateTo: '',
 };
 
-export const MenuItem = {
-  ADD_NEW_POINT: 'ADD_NEW_POINT',
+export const MenuState = {
+  DEFAULT: 'DEFAULT',
+  NEW_EVENT: 'NEW_EVENT',
   TABLE: 'TABLE',
   STATS: 'STATS',
 };

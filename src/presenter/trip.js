@@ -20,27 +20,22 @@ export default class Trip {
   constructor(bodyContainer, tripModel) {
     this._bodyContainer = bodyContainer;
     this._filterContainer = this._bodyContainer.querySelector('.trip-controls__filters');
+    this._mainContainer = this._bodyContainer.querySelector('.trip-main');
+    this._eventsContainer = this._bodyContainer.querySelector('.trip-events');
+    this._eventListContainer = this._eventsContainer.querySelector('.trip-events__list');
+
+    this._currentSortType = SortType.DAY;
+    this._currentFilterType = FilterType.ALL;
+    this._routeInfo = null;
 
     this._tripModel = tripModel;
     this._filterModel = new FilterModel();
     this._sortModel = new SortModel();
 
-    this._menuPresenter = new MenuPresenter(this._bodyContainer, this._tripModel, this._filterModel);
-    this._filterPresenter = new FilterPresenter(this._filterContainer, this._tripModel, this._filterModel);
-    //this._sortPresenter
-
-    this._currentSortType = SortType.DAY;
-    this._currentFilterType = FilterType.ALL;
-    this._routeInfo = null;
-    this._pointPresenters = new Map();
-
-    this._mainContainer = this._bodyContainer.querySelector('.trip-main');
-    this._eventsContainer = this._bodyContainer.querySelector('.trip-events');
-
-    this._appSortComponent = null;
-    this._emptyTripComponent = null;
     this._tripInfoComponent = new TripInfoView();
     this._eventsComponent = new TripEventsView();
+    this._sortComponent = null;
+    this._emptyTripComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -51,19 +46,30 @@ export default class Trip {
     this._filterModel.addObserver(this._handleModelEvent);
     this._sortModel.addObserver(this._handleModelEvent);
 
-    this._newPointPresenter = new NewPointPresenter(this._eventsComponent, this._handleViewAction);
-    this._menuPresenter = new MenuPresenter(this._bodyContainer);
+    this._menuPresenter = new MenuPresenter(this._bodyContainer, this._handleModelEvent);
+    this._filterPresenter = new FilterPresenter(this._filterContainer, this._tripModel, this._filterModel);
+    this._newPointPresenter = null;
+    this._pointPresenters = new Map();
+    //this._sortPresenter
   }
 
   render() {
+    this._renderMenu();
+    this._renderFilter();
     this._renderTrip();
   }
 
-  createPoint() {
-    const newPointPresenter = new NewPointPresenter(this._eventsContainer);
+  _createPoint() {
     this._sortModel.setSort(UpdateType.NONE, SortType.DAY);
     this._filterModel.setFilter(UpdateType.FILTER, FilterType.ALL);
-    newPointPresenter.render();
+
+    if(this._emptyTripComponent) {
+      remove(this._emptyTripComponent);
+    }
+    render(this._eventsContainer, this._eventsComponent, RenderPosition.BEFOREEND);
+    this._eventListContainer = this._eventsContainer.querySelector('.trip-events__list');
+    this._newPointPresenter = new NewPointPresenter(this._eventListContainer, this._handleModelEvent);
+    this._newPointPresenter.render();
   }
 
   _getPoints() {
@@ -96,12 +102,12 @@ export default class Trip {
   }
 
   _renderSort() {
-    if(this._appSortComponent) {
-      this._appSortComponent = null;
+    if(this._sortComponent) {
+      this._sortComponent = null;
     }
-    this._appSortComponent = new SortView(this._currentSortType);
-    this._appSortComponent.setSortClickHandler(this._handleSortClick);
-    render(this._eventsContainer, this._appSortComponent, RenderPosition.AFTERBEGIN);
+    this._sortComponent = new SortView(this._currentSortType);
+    this._sortComponent.setSortClickHandler(this._handleSortClick);
+    render(this._eventsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderEmptyTrip() {
@@ -121,20 +127,20 @@ export default class Trip {
   }
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._tripEventsListContainer, this._handleViewAction, this._handleModeChange);
+    const pointPresenter = new PointPresenter(this._eventListContainer, this._handleViewAction, this._handleModeChange);
     pointPresenter.render(point);
     this._pointPresenters.set(point.id, pointPresenter);
   }
 
   _renderPoints() {
     render(this._eventsContainer, this._eventsComponent, RenderPosition.BEFOREEND);
-    this._tripEventsListContainer = this._eventsContainer.querySelector('.trip-events__list');
+    this._eventListContainer = this._eventsContainer.querySelector('.trip-events__list');
     this._getPoints().forEach((point) => this._renderPoint(point));
   }
 
   _renderTrip() {
-    this._renderMenu();
-    this._renderFilter();
+    //this._renderMenu();
+    //this._renderFilter();
     this._renderTripInfo();
     if(isEmptyEventsList(this._getPoints())) {
       this._renderEmptyTrip();
@@ -170,6 +176,9 @@ export default class Trip {
       case UpdateType.PATCH:
         this._pointPresenters.get(data.id).render(data);
         break;
+      case UpdateType.NEW_POINT:
+        this._createPoint();
+        break;
       case UpdateType.SAVE:
       case UpdateType.SORT:
         this._clearTrip({resetSortType: false, resetTripInfo: true});
@@ -180,6 +189,7 @@ export default class Trip {
         this._renderTrip();
         break;
       case UpdateType.FULL:
+        this._menuPresenter.setButtonStateEnabled();
         this._clearTrip({resetSortType: true, resetTripInfo: true});
         this._renderTrip();
         break;
@@ -187,7 +197,7 @@ export default class Trip {
   }
 
   _clearTrip({resetSortType = false, resetTripInfo = false} = {}) {
-    this._newPointPresenter.destroy();
+    //this._newPointPresenter.destroy();
     this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.clear();
 
@@ -198,8 +208,8 @@ export default class Trip {
     remove(this._eventsComponent);
     remove(this._tripInfoComponent);
 
-    if(this._appSortComponent) {
-      remove(this._appSortComponent);
+    if(this._sortComponent) {
+      remove(this._sortComponent);
     }
 
     if(resetTripInfo) {

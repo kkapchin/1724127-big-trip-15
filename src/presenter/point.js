@@ -109,7 +109,6 @@ export default class Point {
       update,
     );
     document.removeEventListener('keydown', this._documentKeydownHandler);
-    //this._replaceFormToDefault();
   }
 
   _handleDeleteClick(update) {
