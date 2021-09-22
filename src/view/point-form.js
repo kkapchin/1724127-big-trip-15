@@ -6,6 +6,8 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import dayjs from 'dayjs';
 import { getRandomInteger, isEmptyArray } from '../utils/common.js';
+///import OffersView from './offer.js';
+//import { render, RenderPosition } from '../utils/render.js';
 
 const EVENT_TYPES = [
   'Taxi',
@@ -168,6 +170,7 @@ export default class PointForm extends SmartView {
 
     this._datepickrDispatch = null;
     this._datepickrArrival = null;
+    this._offersComponent = null;
 
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._saveClickHandler = this._saveClickHandler.bind(this);
@@ -313,11 +316,12 @@ export default class PointForm extends SmartView {
   _destinationInputHandler(event) {
     if(this._cities.includes(event.target.value)) {
       const newDestination = this._destinations.filter((destination) => destination.name === event.target.value)[0];
+      const newOffer = this._offers.filter((offer) => offer.type === this._data.type)[0];
       this.updateData({
         destination: newDestination,
         isPictures: newDestination.pictures !== undefined,
         offers: [],
-        isOffers: false,
+        isOffers: !isEmptyArray(newOffer.offers),
       });
     }
   }

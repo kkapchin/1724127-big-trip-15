@@ -2,11 +2,9 @@ import dayjs from 'dayjs';
 //import { calculateDuration } from './utils/points';
 
 export const SortType = {
-  DAY: 'Day',
-  EVENT: 'Event',
-  TIME: 'Time',
-  PRICE: 'Price',
-  OFFERS: 'Offers',
+  DAY: 'DAY',
+  TIME: 'TIME',
+  PRICE: 'PRICE',
 };
 
 export const Checkbox = {
@@ -83,6 +81,8 @@ export const BLANK_POINT = {
   type: 'flight',
   offers: [],
   destination: [],
+  isOffers: false,
+  isPictures: false,
   isBlank: true,
 };
 

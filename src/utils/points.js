@@ -67,7 +67,7 @@ export const isEmptyEventsList = (points) =>
   points.length === 0 || (points === undefined || null);
 
 export const SortBy = {
-  DEFAULT: (a, b) => a.dateFrom > b.dateFrom,
+  DAY: (a, b) => dayjs(a.dateFrom).format('YYYY-MM-DDTHH:mm:ss.SSSZ') > dayjs(b.dateFrom).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
   DURATION: (a, b) => a.duration.total < b.duration.total,
   PRICE: (a, b) => a.price < b.price,
 };

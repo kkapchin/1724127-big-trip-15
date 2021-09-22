@@ -95,16 +95,17 @@ export default class Trip {
     this._currentSortType = this._sortModel.getSort();
 
     const points = this._tripModel.getPoints();
+
     const filteredPoints = filter[this._currentFilterType](points);
 
     switch(this._currentSortType) {
       case SortType.TIME:
-        return filteredPoints.sort(SortBy.DURATION);
+        return filteredPoints.slice().sort(SortBy.DURATION);
       case SortType.PRICE:
-        return filteredPoints.sort(SortBy.PRICE);
+        return filteredPoints.slice().sort(SortBy.PRICE);
     }
 
-    return filteredPoints;
+    return filteredPoints/* .slice().sort(SortBy.DAY) */;
   }
 
   _getOffers() {

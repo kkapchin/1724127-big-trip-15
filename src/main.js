@@ -3,7 +3,7 @@ import TripPresenter from './presenter/trip.js';
 import Api from './api.js';
 import { UpdateType } from './const.js';
 
-const AUTHORIZATION = 'Basic kTy9gIdsz2317rD';
+const AUTHORIZATION = 'Basic kTy9TIdsz2317rD';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 
 const bodyContainer = document.querySelector('.page-body');
