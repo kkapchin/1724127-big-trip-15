@@ -18,7 +18,7 @@ import SortModel from '../model/sort.js';
 import LoadingView from '../view/loading.js';
 
 export default class Trip {
-  constructor(bodyContainer, tripModel) {
+  constructor(bodyContainer, tripModel, api) {
     this._bodyContainer = bodyContainer;
     this._filterContainer = this._bodyContainer.querySelector('.trip-controls__filters');
     this._mainContainer = this._bodyContainer.querySelector('.trip-main');
@@ -29,6 +29,8 @@ export default class Trip {
     this._currentFilterType = FilterType.ALL;
     this._isLoading = true;
     this._routeInfo = null;
+
+    this._api = api;
 
     this._tripModel = tripModel;
     this._filterModel = new FilterModel();

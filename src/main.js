@@ -7,9 +7,11 @@ const AUTHORIZATION = 'Basic kTy9gIdsz2317rD';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 
 const bodyContainer = document.querySelector('.page-body');
-const tripModel = new TripModel();
-const tripPresenter = new TripPresenter(bodyContainer, tripModel);
+
 const api =  new Api(END_POINT, AUTHORIZATION);
+const tripModel = new TripModel();
+const tripPresenter = new TripPresenter(bodyContainer, tripModel, api);
+
 
 tripPresenter.render();
 

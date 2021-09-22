@@ -305,7 +305,7 @@ export default class PointForm extends SmartView {
     const newOffer = this._offers.filter((offer) => offer.type === event.target.previousElementSibling.value)[0];
     this.updateData({
       type: newOffer.type,
-      offers: newOffer.offers,
+      offers: [],
       isOffers: !isEmptyArray(newOffer.offers),
     });
   }
