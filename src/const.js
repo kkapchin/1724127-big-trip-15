@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+//import { calculateDuration } from './utils/points';
 
 export const SortType = {
   DAY: 'Day',
@@ -40,6 +41,7 @@ export const UpdateType = {
   NEW_POINT: 'NEW_POINT',
   SORT: 'SORT',
   FULL: 'FULL',
+  INIT: 'INIT',
 };
 
 export const FilterType = {
@@ -66,6 +68,9 @@ export const Autocomplete = {
 
 export const BLANK_POINT = {
   price: '',
+  dateFrom: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+  dateTo: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+  isFavorite: false,
   dispatchDate: dayjs().format('DD/MM/YY HH:mm'),
   dispatchTime: dayjs().format('HH:mm'),
   arrivalDate: dayjs().format('DD/MM/YY HH:mm'),
@@ -76,16 +81,9 @@ export const BLANK_POINT = {
   arrivalTimeClass: dayjs().format('YYYY-MM-DDTHH:mm'),
   duration: '',
   type: 'flight',
-  offers: undefined,
-  destination: {
-    description: '',
-    name: '',
-    pictures: undefined,
-  },
-  isFavorite: false,
-  id: '',
-  dateFrom: '',
-  dateTo: '',
+  offers: [],
+  destination: [],
+  isBlank: true,
 };
 
 export const MenuState = {

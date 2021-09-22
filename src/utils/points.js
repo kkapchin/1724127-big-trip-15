@@ -58,6 +58,8 @@ export const transformToPoints = (points) => points.map((point) => (
     id: point.id,
     dateFrom: point.dateFrom,
     dateTo: point.dateTo,
+    destinations: new Set(point.destinations.map((destination) => destination)).add(point.destination).sort((a, b) => a.name > b.name),
+    destinationCities: [...new Set(point.destinations.map((destination) => destination.name))],
   }
 ));
 

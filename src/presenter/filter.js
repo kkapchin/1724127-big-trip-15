@@ -36,6 +36,9 @@ export default class Filter {
 
   _getFilters() {
     const points = this._tripModel.getPoints();
+    if(!points) {
+      return [];
+    }
 
     return [
       {

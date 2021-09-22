@@ -1,7 +1,8 @@
+import { isEmptyArray } from '../utils/common.js';
 import AbstractView from './abstract.js';
 
 const createOffersTemplate = (offers) => {
-  if(!offers) {
+  if(isEmptyArray(offers)) {
     return '';
   }
 
@@ -50,7 +51,7 @@ const createPointTemplate = (point) => (
     </div>
   </li>`);
 
-export default class RoutePoint extends AbstractView {
+export default class Point extends AbstractView {
   constructor(point) {
     super();
     this._point = point;

@@ -3,3 +3,9 @@ export const isEscEvent = (evt) =>
 
 export const isEnterEvent = (evt) =>
   evt.key === 'Enter';
+
+export const isBackspaceEvent = (evt) =>
+  evt.key === 'Backspace';
+
+export const isDeleteEvent = (evt) =>
+  evt.key === 'Delete';

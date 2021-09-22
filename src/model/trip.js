@@ -1,5 +1,7 @@
+//import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import AbstractObserver from '../utils/abstract-observer.js';
-import { isEmptyEventsList } from '../utils/points.js';
+import { calculateDuration, isEmptyEventsList } from '../utils/points.js';
 
 
 const MAX_DISPLAYED_COUNT = 3;
@@ -9,14 +11,34 @@ export default class Trip extends AbstractObserver{
   constructor() {
     super();
     this._points = null;
+    this._destinations = null;
+    this._offers = null;
   }
 
-  setPoints(points) {
+  setPoints(updateType, points) {
     this._points = points.slice();
+
+    this._notify(updateType);
+  }
+
+  setDestinations(destinations) {
+    this._destinations = destinations;
+  }
+
+  setOffers(offers) {
+    this._offers = offers;
   }
 
   getPoints() {
     return this._points;
+  }
+
+  getDestinations() {
+    return this._destinations;
+  }
+
+  getOffers() {
+    return this._offers;
   }
 
   getRouteInfo() {
@@ -72,5 +94,65 @@ export default class Trip extends AbstractObserver{
     ];
 
     this._notify(updateType);
+  }
+
+  static adaptToClient(point) {
+    const adaptedPoint = Object.assign(
+      {},
+      point,
+      {
+        price: point['base_price'],
+        dateFrom: !(point.date_from === null) ? /* new Date(point.date_from) */ dayjs(point.date_from).format('YYYY-MM-DDTHH:mm:ss.SSSZ') : point.date_from,
+        dateTo: !(point.date_to === null) ? /* new Date(point.date_to) */ dayjs(point.date_to).format('YYYY-MM-DDTHH:mm:ss.SSSZ') : point.date_to,
+        isFavorite: point['is_favorite'],
+        dispatchDate: dayjs(point.date_from).format('DD/MM/YY HH:mm'),
+        dispatchTime: dayjs(point.date_from).format('HH:mm'),
+        arrivalDate: dayjs(point.date_to).format('DD/MM/YY HH:mm'),
+        arrivalTime: dayjs(point.date_to).format('HH:mm'),
+        eventDay: dayjs(point.date_from).format('MMM DD'),
+        dateClass: dayjs(point.date_from).format('YYYY-MM-DD'),
+        dispatchTimeClass: dayjs(point.date_from).format('YYYY-MM-DDTHH:mm'),
+        arrivalTimeClass: dayjs(point.date_to).format('YYYY-MM-DDTHH:mm'),
+        duration: calculateDuration(dayjs(point.date_from), dayjs(point.date_to)),
+      },
+    );
+
+    // Ненужные ключи мы удаляем
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
+  }
+
+  static adaptToServer(point) {
+    const adaptedPoint = Object.assign(
+      {},
+      point,
+      {
+        'base_price': point.price,
+        'date_from': point.dateFrom instanceof dayjs ? point.dateFrom.toISOString() : null, // На сервере дата хранится в ISO формате
+        'date_to': point.dateTo instanceof dayjs ? point.dateTo.toISOString() : null, // На сервере дата хранится в ISO формате
+        'is_favorite': point.isFavorite,
+      },
+    );
+
+    // Ненужные ключи мы удаляем
+    delete adaptedPoint.price;
+    delete adaptedPoint.dateFrom;
+    delete adaptedPoint.dateTo;
+    delete adaptedPoint.isFavorite;
+    delete adaptedPoint.dispatchDate;
+    delete adaptedPoint.dispatchTime;
+    delete adaptedPoint.arrivalDate;
+    delete adaptedPoint.arrivalTime;
+    delete adaptedPoint.eventDay;
+    delete adaptedPoint.dateClass;
+    delete adaptedPoint.dispatchTimeClass;
+    delete adaptedPoint.arrivalTimeClass;
+    delete adaptedPoint.duration;
+
+    return adaptedPoint;
   }
 }

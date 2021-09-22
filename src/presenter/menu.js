@@ -13,7 +13,7 @@ export default class Menu {
 
     this._menuComponent = null;
     this._newPointBtnComponent = null;
-    this._newPointBtnState = Disabled.FALSE;
+    this._newPointBtnState = Disabled.TRUE;
     this._eventsContainer = this._bodyContainer.querySelector('.trip-events');
 
     this._handleSiteMenuClick = this._handleSiteMenuClick.bind(this);

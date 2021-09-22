@@ -1,11 +1,11 @@
-import { Autocomplete, BLANK_POINT, Checkbox, Order } from '../const.js';
-import { generateDestinations, updateOffers } from '../mock/mocks.js';
-import { isEnterEvent, isEscEvent } from '../utils/keyboard-events.js';
+import { Autocomplete, Checkbox, Order } from '../const.js';
+import { isBackspaceEvent, isDeleteEvent, isEnterEvent, isEscEvent } from '../utils/keyboard-events.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import dayjs from 'dayjs';
+import { getRandomInteger, isEmptyArray } from '../utils/common.js';
 
 const EVENT_TYPES = [
   'Taxi',
@@ -20,14 +20,9 @@ const EVENT_TYPES = [
   'Restaurant',
 ];
 
-const reg = /^\d{1,7}$/;
-
-const destinations = generateDestinations()
-  .sort((a, b) => a.name > b.name);
-
-const [...destinationCities] = new Set(destinations.map((destination) => destination.name));
-
-const createOptionsTemplate = () => {
+const createOptionsTemplate = (destinations) => {
+  destinations.sort((a, b) => a.name > b.name);
+  //const [...destinationCities] = new Set(destinations.map((destination) => destination.name));
   const optionsElements = destinations.map((destination) => `<option value="${destination.name}">${destination.name}</option>`);
   return optionsElements.join('');
 };
@@ -42,10 +37,23 @@ const createPicturesTemplate = (pictures) => {
           </div>`;
 };
 
-const createOffersTemplate = (offers) => {
-  const offersElements = offers.map((offer) =>
+const createOffersTemplate = (offers, offerList, type) => {
+  const currentOffers = offerList.filter((element) => element.type === type)[0];
+
+  if(isEmptyArray(currentOffers.offers)) {
+
+    return;
+  }
+
+  const [...selectedOffers] = new Set(offers.map((element) => element.title));
+  const offerElements = currentOffers.offers.map((offer) =>
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" checked>
+      <input
+        class="event__offer-checkbox  visually-hidden"
+        id="event-offer-${offer.title}-1"
+        type="checkbox"
+        name="event-offer-${offer.title}"
+        ${selectedOffers.includes(offer.title) ? Checkbox.TRUE : Checkbox.FALSE}>
       <label class="event__offer-label" for="event-offer-${offer.title}-1">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -56,18 +64,23 @@ const createOffersTemplate = (offers) => {
   return `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
-              ${offersElements.join('')}
+              ${offerElements.join('')}
             </div>
           </section>`;
 };
 
-const createEventTypesTemplate = (actualType) => {
+const createEventTypesTemplate = (actualType, offerList) => {
+  const [...enabledOfferTypes] = new Set(offerList.map((element) => element.type));
   const eventTypesElements = EVENT_TYPES.map((eventType) => {
     const checkboxState = (eventType.toLowerCase() === actualType) ? Checkbox.TRUE : Checkbox.FALSE;
     const type = eventType.toLowerCase();
 
+    if(!enabledOfferTypes.includes(type)) {
+      return;
+    }
+
     return `<div class="event__type-item">
-              <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checkboxState}>
+              <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checkboxState}}>
               <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${eventType}</label>
             </div>`;
   });
@@ -75,12 +88,12 @@ const createEventTypesTemplate = (actualType) => {
   return eventTypesElements.join('');
 };
 
-const createPointFormTemplate = (data) => {
-  const {type, destination, dispatchDate, arrivalDate, price, offers, isOffers, isPictures} = data;
-  const offersTemplate = isOffers ? createOffersTemplate(offers) : '';
+const createPointFormTemplate = (data, destinations, offerList) => {
+  const {type, destination, dispatchDate, offers, arrivalDate, price, isOffers, isPictures} = data;
+  const offersTemplate = isOffers ? createOffersTemplate(offers, offerList, data.type) : '';
   const picturesTemplate = isPictures ? createPicturesTemplate(destination.pictures) : '';
-  const eventTypesTemplate = createEventTypesTemplate(type);
-  const optionsTemplate = createOptionsTemplate();
+  const eventTypesTemplate = createEventTypesTemplate(type, offerList);
+  const optionsTemplate = createOptionsTemplate(destinations);
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -104,7 +117,7 @@ const createPointFormTemplate = (data) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" ${Autocomplete.OFF}>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${isEmptyArray(destination) ? '' : destination.name}" list="destination-list-1" ${Autocomplete.OFF}>
           <datalist id="destination-list-1">
             ${optionsTemplate}
           </datalist>
@@ -134,20 +147,25 @@ const createPointFormTemplate = (data) => {
       </header>
       <section class="event__details">
         ${offersTemplate}
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination.description}</p>
-          ${picturesTemplate}
-        </section>
+        ${isEmptyArray(destination) ? '' :
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination.description}</p>
+      ${picturesTemplate}
+    </section>`}
       </section>
     </form>
   </li>`;
 };
 
 export default class PointForm extends SmartView {
-  constructor(point = BLANK_POINT) {
+  constructor(point, offers, destinations) {
     super();
     this._data = PointForm.parsePointToData(point);
+    this._offers = offers;
+    this._destinations = destinations;
+    [...this._cities] = new Set(this._destinations.map((destination) => destination.name));
+
     this._datepickrDispatch = null;
     this._datepickrArrival = null;
 
@@ -161,13 +179,15 @@ export default class PointForm extends SmartView {
     this._arrivalDateChangeHandler = this._arrivalDateChangeHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._priceInputKeydownHandler = this._priceInputKeydownHandler.bind(this);
+    this._priceInputFocusoutHandler = this._priceInputFocusoutHandler.bind(this);
 
+    this._setDefaultOffers();
     this._setInnerHandlers();
     this._setDatepickrDispatch();
   }
 
   getTemplate() {
-    return createPointFormTemplate(this._data);
+    return createPointFormTemplate(this._data, this._destinations, this._offers);
   }
 
   reset(point) {
@@ -206,7 +226,6 @@ export default class PointForm extends SmartView {
 
   removeElement() {
     super.removeElement();
-
     if(this._datepickrDispatch) {
       this._datepickrDispatch.destroy();
       this._datepickrDispatch = null;
@@ -215,6 +234,18 @@ export default class PointForm extends SmartView {
     if(this._datepickrArrival) {
       this._datepickrArrival.destroy();
       this._datepickrArrival = null;
+    }
+  }
+
+  _setDefaultOffers() {
+    if(this._data.isBlank && !(this._offers === undefined)) {
+      const defaultOffers = this._offers.filter((offers) => offers.type === this._data.type)[0];
+      this.updateData({
+        type: defaultOffers.type,
+        offers: defaultOffers.offers,
+        isOffers: !isEmptyArray(defaultOffers.offers),
+      });
+      delete this._data.isBlank;
     }
   }
 
@@ -248,6 +279,9 @@ export default class PointForm extends SmartView {
     this.getElement()
       .querySelector('.event__input--price')
       .addEventListener('keydown', this._priceInputKeydownHandler);
+    this.getElement()
+      .querySelector('.event__input--price')
+      .addEventListener('focusout', this._priceInputFocusoutHandler);
   }
 
   _saveClickHandler(event) {
@@ -255,6 +289,9 @@ export default class PointForm extends SmartView {
       event.preventDefault();
     }
     event.preventDefault();
+    if(!this._data.destination.name) {
+      return;
+    }
     this._callback.saveClick(PointForm.parseDataToPoint(this._data));
   }
 
@@ -264,34 +301,59 @@ export default class PointForm extends SmartView {
   }
 
   _eventTypeClickHandler(event) {
-    const checkboxElement = event.target.previousElementSibling;
-    const newOffers = updateOffers(checkboxElement.value);
     event.preventDefault();
-    checkboxElement.checked = !checkboxElement.checked;
+    const newOffer = this._offers.filter((offer) => offer.type === event.target.previousElementSibling.value)[0];
     this.updateData({
-      type: checkboxElement.value,
-      offers: newOffers,
-      isOffers: newOffers !== undefined,
+      type: newOffer.type,
+      offers: newOffer.offers,
+      isOffers: !isEmptyArray(newOffer.offers),
     });
   }
 
   _destinationInputHandler(event) {
-    if(destinationCities.includes(event.target.value)) {
+    if(this._cities.includes(event.target.value)) {
+      const newDestination = this._destinations.filter((destination) => destination.name === event.target.value)[0];
       this.updateData({
-        city: event.target.value,
-        destination: destinations.filter((destination) => destination.name === event.target.value)[0],
+        destination: newDestination,
+        isPictures: newDestination.pictures !== undefined,
+        offers: [],
+        isOffers: false,
       });
     }
   }
 
   _priceInputKeydownHandler(event) {
-    if(!reg.test(event.key)) {
-      event.preventDefault();
+    if(!(isBackspaceEvent(event) || isDeleteEvent(event))) {
+      const reg = /^\d{1,7}$/;
+      if(!reg.test(event.key) || isEscEvent(event)) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
     }
   }
 
+  _priceInputFocusoutHandler(event) {
+    if(!event.target.value || parseInt(event.target.value, 10) === 0) {
+      this.updateData({
+        price: this._data.price,
+      });
+      return;
+    }
+    this.updateData({
+      price: parseInt(event.target.value, 10),
+    });
+  }
+
   _destinationFocusoutHandler(event) {
-    if(!destinationCities.includes(event.target.value)) {
+    if(!this._cities.includes(event.target.value)) {
+      if(!this._data.destination.name) {
+        const randomDestination = this._destinations[getRandomInteger(0, this._destinations.length - 1)];
+        this.updateData({
+          destination: randomDestination,
+          isPictures: !isEmptyArray(randomDestination.pictures),
+        });
+        return;
+      }
       event.target.value = this._data.destination.name;
     }
   }
@@ -361,7 +423,7 @@ export default class PointForm extends SmartView {
       {},
       point,
       {
-        isOffers: point.offers !== undefined,
+        isOffers: !isEmptyArray(point.offers),
         isPictures: point.destination.pictures !== undefined,
       },
     );
